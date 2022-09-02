@@ -1,1 +1,1 @@
-
+Stimuli used in MEG experiment, i.e., videos were presented to human subjects situated in the MEG scanner, 3D kinematic marker positions were used to create different representational dissimilarity matrices (RDMs) of stimulus features, e.g., 3D body posture or motion. See readme file in root directory for more information and a link to the research article for which these stimuli were used. 
