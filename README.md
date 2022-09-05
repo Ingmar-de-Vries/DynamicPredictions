@@ -20,5 +20,8 @@ The code is structured as follows:
     - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
 
   -	Create model RDMs
-
--	Run dRSA analysis
+  
+  - Run dRSA analysis
+    - In the "dynamicRSA" subdirectory, you'll find the following analysis scripts:
+      - "cluster_shell.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
+      - "cluster_shell_simulations.m" - same for simulations.
