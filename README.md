@@ -19,7 +19,7 @@ The code is structured as follows:
     - Additionally, you’ll need to have Psychophysics Toolbox Version 3 (PTB-3) downloaded and installed to run this experiment. 
 
   -	Pre-processing of MEG data
-    - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 (201019), using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
+    - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
 
   -	Create model RDMs
 
