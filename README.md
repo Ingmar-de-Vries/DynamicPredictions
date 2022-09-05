@@ -17,6 +17,7 @@ The code is structured as follows:
       - “CreateCatchTrials.m” – create pool of catch trials to pick from.
 
   -	Pre-processing of MEG and eyetracking data
+    - Pre-processing of eyetracking data was done using custom written script "DynamicPredictions_eyetracking_asc2ft.m", which takes raw Eyelink data in asc format as input, and gives pre-processed eyetracking data in Fieldtrip format as output. This is subsequently used to create an eyetracker RDM per individual subject. 
     - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
 
   -	Create model RDMs
