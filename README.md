@@ -12,11 +12,11 @@ The code is structured as follows:
 
   -	Experiment
     - In the “experiment” subdirectory, you will find the Matlab script “DynamicPredictions_MEGexperiment.m” 
+    - You need Psychophysics Toolbox Version 3 (PTB-3) to run this experiment. 
     - In the subdirectory “experiment/stimuli”, you will find the 14 unique 5-second-long ballet dancing videos used in the experiment, plus the corresponding and temporally aligned 3D kinematic marker locations at 100 Hz, stored in Matlab matrices. 
     - The experiment script makes use of the following helper scripts or files also present in the experiment directory:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
-      - “CreateCatchTrials.m” – create pool of catch trials to pick from
-    - Additionally, you’ll need to have Psychophysics Toolbox Version 3 (PTB-3) downloaded and installed to run this experiment. 
+      - “CreateCatchTrials.m” – create pool of catch trials to pick from.
 
   -	Pre-processing of MEG data
     - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
