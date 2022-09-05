@@ -22,15 +22,15 @@ The code is structured as follows:
       - "DynamicPredictions_MEGpp1_PSDcheck.m" - initial sanity/quality check of powerspectra. Can be skipped as this will be done after filters anyway. 
       - "DynamicPredictions_MEGpp2_addEvents.m" - read events from trigger channel and give appropriate names.
       - "DynamicPredictions_MEGpp3_addPTBevents.m" - not necessary to use this, check comments in script for details.
-      - "DynamicPredictions_MEGpp4_checkVidOnset.m"
-      - "DynamicPredictions_MEGpp5_filters.m"
-      - "DynamicPredictions_MEGpp6_ICAblinks.m"
-      - "DynamicPredictions_MEGpp7_detectArtifacts.m"
-      - "DynamicPredictions_MEGpp8_epoch_singletrialDCcorrection.m"
-      - "DynamicPredictions_MEGpp9_export2FT.m"
-      - "DynamicPredictions_MEGpp10_realign2photodiode.m"
-      - "DynamicPredictions_MEGppSource1_computeInversionKernel.m"
-      - "DynamicPredictions_storeManualBadTrials.m"
+      - "DynamicPredictions_MEGpp4_checkVidOnset.m" - only sometimes necessary, i.e., sometimes triggers were erroneously stored double. If that's the case, this script helps finding those duplicates so they can be removed manually in Brainstorm GUI. But only happened in rare cases. 
+      - "DynamicPredictions_MEGpp5_filters.m" - notch filter, downsample, and create powerspectra for sanity check.
+      - "DynamicPredictions_MEGpp6_ICA.m" - run ICA for ocular and cardiac artifacts, separately for magneto- and gradiometers.
+      - "DynamicPredictions_MEGpp7_detectArtifacts.m" - I skipped this step, because I opted for manual artifact detection after epoching. 
+      - "DynamicPredictions_MEGpp8_epoch_singletrialDCcorrection.m" - epoch and single-trial baseline correction.
+      - "DynamicPredictions_MEGpp9_export2FT.m" - export from Brainstorm to Fieldtrip format.
+      - "DynamicPredictions_MEGpp10_realign2photodiode.m" - realign single trials to photodiode. This script is called from MEGpp9. 
+      - "DynamicPredictions_MEGppSource1_computeInversionKernel.m" - Apply minimum norm estimation (MNE) and store resulting inversion kernel to transform sensor level data to source level data outside of Brainstorm (which I do in the main dynamic RSA analysis script). 
+      - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
   -	Create model RDMs
 
