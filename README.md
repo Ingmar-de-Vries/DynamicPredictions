@@ -16,7 +16,7 @@ The code is structured as follows:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
       - “CreateCatchTrials.m” – create pool of catch trials to pick from.
 
-  -	Pre-processing of MEG data
+  -	Pre-processing of MEG and eyetracking data
     - Pre-processing of MEG data was done using the Brainstorm toolbox version 3 using GUI operations, which were transformed into Matlab scripts where possible. These are located in the subdirectory “preprocessing”.
 
   -	Create model RDMs
