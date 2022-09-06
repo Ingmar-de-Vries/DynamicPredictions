@@ -1,4 +1,4 @@
-function ActionPrediction_checkAtlases(cfg)
+function DynamicPredictions_checkAtlases(cfg)
 
 % check if correct atlases will be loaded for parcel definitions
 addpath('\\XXX');
@@ -28,7 +28,7 @@ for iSub = cfg.SubVec
     end
     
     atlas = load(fn2load);
-    atlasIdx = logical(contains(extractfield(atlas.Atlas,'Name'),cfg.atlas) + contains(extractfield(atlas.Atlas,'Name'),'Schaefer_200'));
+    atlasIdx = logical(contains(extractfield(atlas.Atlas,'Name'),cfg.atlas));% sometimes Schaefer_200 is called differently: + contains(extractfield(atlas.Atlas,'Name'),'Schaefer_200'));
     atlas = atlas.Atlas(atlasIdx).Scouts;
     
     idx2remove = contains(extractfield(atlas,'Label'),'Background');
