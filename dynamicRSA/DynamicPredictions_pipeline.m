@@ -1,55 +1,42 @@
 close all; clearvars; clc
 addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
 
-% Parameters for creating RDMs
+% Parameters for creating neural RDM
 cfg.cluster=1;% 1 = run on cluster, 2 = run locally
 cfg.SubVec = 1:22;%
-cfg.radius = 0; % in Time bins
-cfg.crossval = 0;%only for correlation/Euclidean, classifiers are always cross-validated
-cfg.classifier = 3; % lda, svm, corr, euclidean
-cfg.averaging = 0; % number of Trials averaged before classification
-cfg.resampling = 0; % number of resampled averages
-cfg.chunksize = 0; % number of chunks
-cfg.smoothingMSec = 20; % smoothing kernel across time, in msec 
-cfg.downsample = 100;
-cfg.normalize = 0;
-cfg.TestVec = 1; % optionally different classification schemes, for us doesn't make sense to do anything alse than pairwise classification of 14 videos
-cfg.TestName = 'multiclassVid';
-cfg.type =   'classifyMat';
-cfg.chan_type= 'all'; % 'all';% 'meg_axial'; %   'meg_planar'; %
-cfg.scale_sensors = 0;
-cfg.MNN = 1;% multivariate noise normalisation (Guggenmos et al. 2018 NeuroImage)
+% cfg.radius = 0; % for defining neighbourhood over time
+% cfg.crossval = 0;%only for correlation/Euclidean, classifiers are always cross-validated. WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED! 
+% cfg.classifier = 3; % 1 = lda, 2 = svm, 3 = corr, 4 = euclidean. WARNING: CURRENTLY ONLY CORRELATION IS TESTED! 
+% cfg.averaging = 0; % number of trials averaged before classification. For correlation, automatically all trials of the same sequence are averaged.
+% cfg.resampling = 0; % number of resampled averages. WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED!
+% cfg.chunksize = 0; % number of chunks. Again, not relevant for correlation. 
+cfg.smoothingMSec = 20; % smoothing kernel across time, in msec. Applied before creating neural RDM.  
+cfg.downsample = 100;% downsample neural data before creating neural RDM.  
+% cfg.normalize = 0;% WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED!
 
 % Parameters for dynamic RSA
-cfg.smoothNeuralRDM=2;% smoothing of neural RDM. In samples, so with fs = 100 Hz, 100 msec smoothing = 10 samples
+cfg.smoothNeuralRDM=2;% smoothing of neural RDM. In samples, so with fs = 100 Hz, 20 msec smoothing = 2 samples
 cfg.smoothModelRDM=2;% in samples
-cfg.randomModelPERM = 0;% 1 = randomize stimuli neural RDM, 2 = randomize stimuli model RDM, 3 = randomize time neural RDM, 4 = randomize time model RDM
-
-cfg.glmRSA=2;% 0 = correlation, 3 = regularized regression, now in combination with PCA, 4 = PCA and non-regularized regression, 5 = partial least-squares regression (PLSR), 6 = principal component regression (PCR) 
+cfg.glmRSA=1;% which measure to use for computing similarity between neural and model RDM: 0 = correlation, 1 = principal component regression (PCR) weights
 cfg.nPCAcomps = 75;% maximum amount of PCA components to regress out
-cfg.nstim = 14;% 14 = run the standard analysis on 14 stimuli, 28 = split the stimuli in 2 to create much larger RDMs (i.e., 378 instead of 91)
-cfg.randshuff = [250 2];% .94 = largest difference in onset between sequences of any move, 1.4 = average onset second move, 1.86 = max onset second move (so 1st and 2nd moves can even be synchronized)
-
-%% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% SOURCE LEVEL ANALYSES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cfg.nstim = 14;% number of unique video sequences
+cfg.randshuff = [1000 2];% first value indicates amount of iterations, second value indicates maximum start time in sec of resampled sequence, i.e., 2 indicates the original 5 sec trials will be randomly resampled to 3 second trials on each iteration
 
 % ROI definition
-ActionPrediction_defineSourceROIs();
+DynamicPredictions_defineSourceROIs();
 
-% simple script to check if correct atlases will be loaded for parcel definitions
-cfg.atlas = 'HCP';
-ActionPrediction_checkAtlases(cfg);
+% check if correct atlases will be loaded for parcel definitions, not necessary if you see in the main script below that this is happening correctly
+cfg.atlas = 'HCP';% or Schaefer
+DynamicPredictions_checkAtlases(cfg);
 
 %% ROI-based analysis
-cfg.ROIVec = 1:6;%[2 3 7 8 9 10];%V1, V2, V3V4, LOTC, aIPL, PMv, post dors stream, ant dors stream, PMd, pDLPFC
-cfg.dynRDMnames = {'graysmooth','opticalFlowFBmag','opticalFlowFB','posabs','posrel','velabs','velrel','accabs','accrel','eyePos'};%,'COMpos','COMvel','COMacc'};
-cfg.models2test = [1:7 10];% only test these from the above models, but regress out all 10 others when testing a certain model
-cfg.atlas = 'HCP';% HCP, or Schaefer_200, or other 
-cfg.splitLR = 0;% separate for left and right hemisphere, if 0 combine hemispheres
+cfg.ROIVec = 1:6;% V1, V2, V3V4, LOTC, aIPL, PMv
+cfg.dynRDMnames = {'graysmooth','opticalFlowFBmag','opticalFlowFB','posabs','posrel','velabs','velrel','accabs','accrel','eyePos'};% models to include in regression
+cfg.models2test = [1:7 10];% only test these from the above models, but regress out all 9 others when testing a certain model
+cfg.atlas = 'HCP';% HCP or other. WARNING: CURRENTLY ONLY HCP IS TESTED FOR ROI-BASED ANALYSIS
 
-script2run = 'ActionPrediction_ERPdynRSA_sourceROIs';
+% send analysis to cluster, where it will run subjects and ROIs in parallel: 
+script2run = 'DynamicPredictions_ERFdynamicRSA_ROIsource';
 cluster_shell(cfg,script2run);
 
 % statistics
