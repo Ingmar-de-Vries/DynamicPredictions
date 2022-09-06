@@ -48,4 +48,9 @@ The code is structured as follows:
       - "DynamicPredictions_checkAtlases.m" - just sanity check that correct atlas and inversion kernel will be selected in main analysis
       - "DynamicPredictions_ERFdynamicRSA_ROIsource.m" - main analysis script, which is called from "DynamicPredictions_pipeline.m"
       - "procrustes_constrain_rotationZaxis_IdV.m" - modified version of Matlab's procrustes.m, which now constrains rotation to vertical (Z) axis, because that is how we define viewpoint invariant (i.e., relative) body posture, motion and acceleration. Note that my modified version is correct, but currently very time inefficient, effectively more than doubling the total computation time. This was a later modification and I'm sure I can find a much faster implementation. Feel free to have a look in the script and suggest a faster implementation! 
-      - "regressionBorderPerModel_smRDM20msec.mat" - data with regression borders used to regress out model itself to attenuate effects of model autocorrelation. These borders are determined by the simulations (see methods section in article and explanation in "DynamicPredictions_ERFdynamicRSA_ROIsource.m" for details). 
+      - "regressionBorderPerModel_smRDM20msec.mat" - file containing regression borders used to regress out model itself to attenuate effects of model autocorrelation. These borders are determined by the simulations (see methods section in article and explanation in "DynamicPredictions_ERFdynamicRSA_ROIsource.m" for details). 
+      - "DynamicPredictions_STAT_ERFdynamicRSA_ROIsource.m" - run statistics on ROI-based dRSA results, and compute peak latency and representational spread (RS) index.
+      - "modelautocorr_slopes.mat" - file containing dRSA curves resulting from PCR on simulated data. This is used to compute the representational spread (RS) index.
+
+
+      - "DynamicPredictions_MEGpp3_addPTBevents.m" - not necessary to use this, check comments in script for details.
