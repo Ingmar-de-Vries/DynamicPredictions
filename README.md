@@ -39,8 +39,8 @@ The code is structured as follows:
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - xxx
 
-  - Run dRSA analysis
-    - In the "dynamicRSA" subdirectory, you'll find the following analysis scripts:
+  - Run dRSA analysis, statistics, plotting, and simulations
+    - In the "dynamicRSA" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_pipeline.m" - the main analysis pipeline from which all other functions are called.
       - "cluster_shell.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
       - "cluster_shell_simulations.m" - same for simulations.
