@@ -1,15 +1,5 @@
 function DynamicPredictions_ERFdynamicRSA_ROIsource(cfg,iSub,iROI)
 
-% if isfield(cfg,'cluster')
-%     addpath('//mnt/storage/tier2/morwur/Projects/INGMAR/ActionPrediction/toolboxes/fieldtrip-20191113');
-%     addpath('//mnt/storage/tier2/morwur/Projects/INGMAR/ActionPrediction/code/neuralDecoding');
-% else
-%     addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\toolboxes\fieldtrip-20191113');
-%     addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
-% end
-% ft_defaults
-% cfg = ActionPrediction_config(cfg);
-
 % You can run this function locally (by looping over subjects), or send to a cluster (which I did using the accompanying "cluser_shell.m" function)
 % set some directories depending on running this locally or on a cluster:
 if isfield(cfg,'cluster')
@@ -100,12 +90,6 @@ ds.sa.targets=ds.sa.trialinfo;
 cond_idx = find(ismember(ds.sa.targets,1:nstim));
 ds=cosmo_slice(ds,cond_idx,1);
 
-% define chunks.
-% ds.sa.chunks=(1:size(ds.samples,1))';
-% cfg.chunksize = size(ds.samples,1);
-% ds.sa.chunks=cosmo_chunkize(ds,cfg.chunksize);
-% cosmo_check_dataset(ds);
-
 % average over all trials beloning to the same unique sequence for correlation-based dissimilarity analysis
 ds = cosmo_fx(ds, @(x)mean(x,1),'targets');%average over all trials
 
@@ -127,7 +111,6 @@ newtimelength = (triallengthsec-cfg.randshuff(2))*cfg.downsample;
 tNew = 0:1/cfg.downsample:triallengthsec+cfg.randshuff(2)-1/cfg.downsample;% after jittering
 t4deriv = tNew+(1/cfg.downsample)/2;% timesteps in between for any derivative (e.g., position --> motion, or motion --> acceleration)
 t4deriv(end) = [];
-% padlength = ceil(cfg.smoothNeuralRDM/2);% amount of samples for padding (using local mean) after realignment
 neuralID = dsearchn(tNeural',[0 triallengthsec]');% only select neural data during stimulus presentation (i.e., from 0 to triallengtsec)
 neuralID = neuralID(1):neuralID(2);
 neuralID(end) = [];
@@ -317,7 +300,6 @@ for iterbatch = 1:batchnum
         
         % determine indices for stimulus-specific re-alignment for current iteration
         shuffleIDmodel = dsearchn(tKin',shuffleTime(iter,:)')';
-%         shuffleIDneural = dsearchn(tNeural',shuffleTime(iter,:)')';
 
         % tstart is where the stimulus model should start after shifting it in order to align it with others (relative to new t = 0, which is cfg.randshuff(2)*cfg.downsample)
         tstart = cfg.randshuff(2)*cfg.downsample-shuffleIDmodel+1;        
@@ -365,10 +347,6 @@ for iterbatch = 1:batchnum
         
         % compute neural RDM
         ds_res=cosmo_searchlight(ds_iter,nbrhood,measure,measure_args);
-        
-%         if (cfg.classifier == 3 || cfg.classifier == 4) && cfg.crossval == 0
-%             cfg.chunksize = 0;%only for name
-%         end
         
         % unpack the matrices
         MATxTIME = zeros(nstim,nstim,length(ds_res.a.fdim.values{:}));

@@ -3,16 +3,9 @@ addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\
 
 % Parameters for creating neural RDM
 cfg.cluster=1;% 1 = run on cluster, 2 = run locally
-cfg.SubVec = 1:22;%
-% cfg.radius = 0; % for defining neighbourhood over time
-% cfg.crossval = 0;%only for correlation/Euclidean, classifiers are always cross-validated. WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED! 
-% cfg.classifier = 3; % 1 = lda, 2 = svm, 3 = corr, 4 = euclidean. WARNING: CURRENTLY ONLY CORRELATION IS TESTED! 
-% cfg.averaging = 0; % number of trials averaged before classification. For correlation, automatically all trials of the same sequence are averaged.
-% cfg.resampling = 0; % number of resampled averages. WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED!
-% cfg.chunksize = 0; % number of chunks. Again, not relevant for correlation. 
+cfg.SubVec = 1:22;% 
 cfg.smoothingMSec = 20; % smoothing kernel across time, in msec. Applied before creating neural RDM.  
 cfg.downsample = 100;% downsample neural data before creating neural RDM.  
-% cfg.normalize = 0;% WARNING: THIS OPTION IS SET TO ZERO, OTHER OPTIONS ARE NOT TESTED!
 
 % Parameters for dynamic RSA
 cfg.smoothNeuralRDM=2;% smoothing of neural RDM. In samples, so with fs = 100 Hz, 20 msec smoothing = 2 samples
@@ -23,11 +16,11 @@ cfg.nstim = 14;% number of unique video sequences
 cfg.randshuff = [1000 2];% first value indicates amount of iterations, second value indicates maximum start time in sec of resampled sequence, i.e., 2 indicates the original 5 sec trials will be randomly resampled to 3 second trials on each iteration
 
 % ROI definition
-DynamicPredictions_defineSourceROIs();
+% DynamicPredictions_defineSourceROIs();
 
-% check if correct atlases will be loaded for parcel definitions, not necessary if you see in the main script below that this is happening correctly
-cfg.atlas = 'HCP';% or Schaefer
-DynamicPredictions_checkAtlases(cfg);
+% check if correct atlases will be loaded for parcel definitions, not necessary to run if you see in the main script below that this is happening correctly
+% cfg.atlas = 'HCP';% or Schaefer
+% DynamicPredictions_checkAtlases(cfg);
 
 %% ROI-based analysis
 cfg.ROIVec = 1:6;% V1, V2, V3V4, LOTC, aIPL, PMv
@@ -51,7 +44,7 @@ cfg.pthresh = 0.05;% threshold for cluster size test
 cfg.pthreshclust = 0.01;% single sample tests to determine which samples are included in cluster
 cfg.ROIVec = 1:6;%V1, V2, V3V4, LOTC, aIPL, PMv, post dors stream, ant dors stream, PMd, pDLPFC
 cfg.randshuff(1) = 1000;
-script2run = 'ActionPrediction_STATS_ERPdynRSA_sourceROIs';
+script2run = 'DynamicPredictions_STATS_ERFdynamicRSA_ROIsource';
 cluster_shell(cfg,script2run);
 
 % plot ROI analysis
