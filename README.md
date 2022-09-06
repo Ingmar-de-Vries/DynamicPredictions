@@ -39,4 +39,5 @@ The code is structured as follows:
       - "DynamicPredictions_pipeline.m" - the main analysis pipeline from which all other functions are called.
       - "cluster_shell.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
       - "cluster_shell_simulations.m" - same for simulations.
+      - "DynamicPredictions_defineSourceROIs.m" - create ROIs based on (combinations of) parcels of HCP atlas.
        
