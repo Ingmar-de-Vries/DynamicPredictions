@@ -6,6 +6,8 @@ This repository contains Matlab code accompanying the scientific article, curren
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
+Note that this custom-written code uses several functions from the Brainstorm, Fieldtrip and EEGLAB toolboxes. 
+
 The code is structured as follows:
 
   -	Experiment
