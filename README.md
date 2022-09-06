@@ -2,7 +2,7 @@
 
 This repository contains Matlab code accompanying the scientific article, currently available as pre-print, titled: "Predictive neural representations of naturalistic dynamic input", by Ingmar E.J. de Vries and Moritz F. Wurm. 
 
-  -	The article is available at: xxx
+  -	The article is available at: https://doi.org/10.1101/2022.09.02.506366
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
