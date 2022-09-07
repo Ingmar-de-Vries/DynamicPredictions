@@ -57,7 +57,7 @@ The code is structured as follows:
       - "DynamicPredictions_PLOTS_ERFdynamicRSA_ROIsource.m" - plot ROI-based results, in article: figure 2a, 3, and S5.
       - "brewermap.m" - creates nice colormaps that are colorblind friendly. Not my code, for all colormaps and source code see: https://colorbrewer2.org/
       - "boundedline.m" - creates nice shading around lines, e.g., with a measure of distribution across subjects (here standard error). Not my code, for source code see https://github.com/kakearney/boundedline-pkg
-      - "xxx"
+      - "DynamicPredictions_ERFdynamicRSA_searchlight.m" - searchlight analysis, which is called from "DynamicPredictions_pipeline.m"
 
 - Run dRSA simulations, and plotting
   - In the "simulations" subdirectory, you'll find the following scripts:
