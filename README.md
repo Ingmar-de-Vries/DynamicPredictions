@@ -41,7 +41,7 @@ The code is structured as follows:
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - xxx
 
-  - Run dRSA analysis, statistics, plotting, and simulations
+  - Run dRSA analysis, statistics, and plotting
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_pipeline.m" - the main analysis pipeline from which all other functions are called.
       - "cluster_shell.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
@@ -59,3 +59,6 @@ The code is structured as follows:
       - "boundedline.m" - creates nice shading around lines, e.g., with a measure of distribution across subjects (here standard error). Not my code, for source code see https://github.com/kakearney/boundedline-pkg
       - "xxx"
 
+- Run dRSA simulations, and plotting
+  - In the "simulations" subdirectory, you'll find the following scripts:
+    - 'XXX'
