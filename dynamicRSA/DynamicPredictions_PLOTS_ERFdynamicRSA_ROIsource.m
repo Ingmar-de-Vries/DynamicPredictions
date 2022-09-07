@@ -1,12 +1,9 @@
 function DynamicPredictions_PLOTS_ERFdynamicRSA_ROIsource(cfg)
 
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\toolboxes\fieldtrip-20191113');
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
-
-% addpath('\\XXX\ActionPrediction\toolboxes\fieldtrip-20191113');
-% addpath(genpath('\\XXX\ActionPrediction\code'));
-% addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
-% cfg.path = '\\XXX\ActionPrediction';
+addpath('\\XXX\ActionPrediction\toolboxes\fieldtrip-20191113');
+addpath(genpath('\\XXX\ActionPrediction\code'));
+addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
+cfg.path = '\\XXX\ActionPrediction';
 
 ft_defaults
 
