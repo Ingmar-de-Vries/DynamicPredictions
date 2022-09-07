@@ -59,19 +59,18 @@ cfg.ROIVec = 1:6;%V1, V2, V3V4, LOTC, aIPL, PMv
 
 DynamicPredictions_PLOTS_ERFdynamicRSA_ROIsource(cfg);
 
-%% semi-searchlight analysis
-cfg.ROIVec = 1;% just call it 1 so cluster_shell sends it for only 1 ROI
-cfg.atlas = 'Schaefer2018_400';%'HCP';%'Schaefer2018_400';% use Schaeffer 200 or 400 (because ROIs have roughly same size)
-cfg.peaks2test = [1 .11 ; 2 .07 ; 3 -.09 ; 3 .2 ; 4 .18 ; 5 .07 ; 6 -.17 ; 7 -.44 ; 10 .09];% only compute dRSA at one or two lags (in sec) to save time. Lag is determined by finding peak in ROI based analysis
+%% searchlight analysis
+cfg.ROIVec = 1;% just call it 1 so cluster_shell sends it only once (at least for ROIs, it will still be send in parallel for each subject)
+cfg.atlas = 'Schaefer2018_400';% we used Schaefer2018_400 because ROIs have roughly same size. WARNING: CURRENTLY ONLY Schaefer2018_400 IS TESTED FOR SEARCHLIGHT ANALYSIS
+cfg.peaks2test = [1 .11 ; 2 .07 ; 3 -.09 ; 3 .2 ; 4 .18 ; 5 .07 ; 6 -.17 ; 7 -.44 ; 10 .09];% only compute dRSA at peak to save computation time. Lag is determined by finding peak in ROI based analysis
 cfg.randshuff = [1000 2];
-script2run = 'ActionPrediction_ERPdynRSA_source_semisearchlight';
+script2run = 'DynamicPredictions_ERFdynamicRSA_searchlight';
 cluster_shell(cfg,script2run);
 
-% stats and plot semi-searchlight in Brainstorm
+% stats and plot searchlight (plotting done using Brainstorm GUI, see script and article for details)
 cfg.fisherz = 1;%fisher transform for individual subject correlation values before stats
 cfg.sub4stat = cfg.SubVec;
 cfg.SubVec = 1;%only so cluster_shell sends job once rather than for each subject
-cfg.pvalFDR = 0.05;
 cfg = rmfield(cfg,'cluster');
 ActionPrediction_STATS_ERPdynRSA_source_semisearchlight(cfg);
 ActionPrediction_PLOT_ERPdynRSA_source_semisearchlight(cfg);
