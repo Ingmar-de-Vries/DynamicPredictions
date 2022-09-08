@@ -32,7 +32,7 @@ cfg.models2test = [1:7 10];% only test these from the above models, but regress 
 cfg.atlas = 'HCP';% HCP or other. WARNING: CURRENTLY ONLY HCP IS TESTED FOR ROI-BASED ANALYSIS
 
 % send analysis to cluster, where it will run subjects and ROIs in parallel
-script2run = 'DynamicPredictions_ERFdynamicRSA_ROIsource';
+script2run = 'DynamicPredictions_RUN_ERFdynamicRSA_ROIsource';
 cluster_shell(cfg,script2run);
 
 % statistics
@@ -64,7 +64,7 @@ cfg.ROIVec = 1;% just call it 1 so cluster_shell sends it only once (at least fo
 cfg.atlas = 'Schaefer2018_400';% we used Schaefer2018_400 because ROIs have roughly same size. WARNING: CURRENTLY ONLY Schaefer2018_400 IS TESTED FOR SEARCHLIGHT ANALYSIS
 cfg.peaks2test = [1 .11 ; 2 .07 ; 3 -.09 ; 3 .2 ; 4 .18 ; 5 .07 ; 6 -.17 ; 7 -.44 ; 10 .09];% only compute dRSA at peak to save computation time. Lag is determined by finding peak in ROI based analysis
 cfg.randshuff = [1000 2];
-script2run = 'DynamicPredictions_ERFdynamicRSA_searchlight';
+script2run = 'DynamicPredictions_RUN_ERFdynamicRSA_searchlight';
 cluster_shell(cfg,script2run);
 
 % stats and plot searchlight (plotting done using Brainstorm GUI, see script and article for details)
@@ -72,29 +72,21 @@ cfg.fisherz = 1;%fisher transform for individual subject correlation values befo
 cfg.sub4stat = cfg.SubVec;
 cfg.SubVec = 1;%only so cluster_shell sends job once rather than for each subject
 cfg = rmfield(cfg,'cluster');
-ActionPrediction_STATS_ERPdynRSA_source_semisearchlight(cfg);
-ActionPrediction_PLOT_ERPdynRSA_source_semisearchlight(cfg);
+DynamicPredictions_STATS_ERFdynamicRSA_searchlight(cfg);
+DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight(cfg);
 
 %% simulations
-cfg.lag = 0;%.12;% in sec
-cfg.randshuff(1) = 150;
-cfg.SubVec = [1:10 99];% these are actually models to implant, just call it SubVec so it works with cluster_shell.m in parallelizing on the cluster
-cfg.ROIVec = 7;% only send once to cluster for single randomization, or 1:21 if including eye data so it's send for each subject's eye data (which we can average over afterwards)
-cfg.iterationsPERbatch = 30;
+cfg.lag = 0;% in sec, at which lag to 'implant' the simulated model RDM
+cfg.randshuff(1) = 150;% for simulations fewer iterations are needed
+cfg.SimVec = [1:10 99];% models to simulate
+cfg.ROIVec = 7;% only send once to cluster for single randomization
+cfg.iterationsPERbatch = 30;% for simulation iterations are send to the cluster in batches in parallel
 cfg.iterbatches = cfg.randshuff(1)./cfg.iterationsPERbatch;
-script2run = 'ActionPrediction_ERPdynRSA_sourceROIs_simulation';
-cluster_shell_simulations(cfg,script2run);
-
-% simulate combinations of models
-cfg.SubVec = 123;% these are actually models to implant, just call it SubVec so it works with cluster_shell.m in parallelizing on the cluster
-script2run = 'ActionPrediction_ERPdynRSA_sourceROIs_combisim';
+cfg.randweight = 0;% weight of random neural RDM (noise) to which simulated model will be added, weight of zero means no random neural RDM
+script2run = 'DynamicPredictions_RUN_ERFdynamicRSA_simulations';
 cluster_shell_simulations(cfg,script2run);
 
 % plot main simulations
 cfg = rmfield(cfg,'cluster');
 ActionPrediction_PLOT_ERPdynRSA_sourceROIs_simulation(cfg);
-
-% plot extra simulations for paper (i.e., 1. combining models, 2. different levels of noise, 3. distributed representation)
-cfg = rmfield(cfg,'cluster');
-ActionPrediction_PLOT_ERPdynRSA_sourceROIs_simulationExtras(cfg);
 
