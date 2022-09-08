@@ -42,7 +42,7 @@ The code is structured as follows:
       - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
   -	Create model RDMs
-    - RDMs based on video data and eyetracker data are created outside of the main "DynamicPredictions_ERFdynRSA_sourceROI.m" script (see section "Run dRSA analysis" below). However, for the 6 RDMs based on kinematic marker data (absolute and relative body posture, motion, and acceleration), these are created inside the resampling iteration in the main script, because relative body posture, motion and acceleration can only be computed after realigning the 3-sec resampled sequences to each other. The pre-created RDMs have size 14x14x250x250 (i.e., stim1 x stim2 x timestim1 x timestim2) at 50 Hz. 
+    - RDMs based on video data and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below). However, for the 6 RDMs based on kinematic marker data (absolute and relative body posture, motion, and acceleration), these are created inside the resampling iteration in the main script, because relative body posture, motion and acceleration can only be computed after realigning the 3-sec resampled sequences to each other. The pre-created RDMs have size 14x14x250x250 (i.e., stim1 x stim2 x timestim1 x timestim2) at 50 Hz. 
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - xxx
 
@@ -50,7 +50,6 @@ The code is structured as follows:
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_pipeline.m" - the main analysis pipeline from which all other functions are called.
       - "cluster_shell.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
-      - "cluster_shell_simulations.m" - same for simulations.
       - "DynamicPredictions_defineSourceROIs.m" - create ROIs based on (combinations of) parcels of HCP atlas.
       - "DynamicPredictions_checkAtlases.m" - just sanity check that correct atlas and inversion kernel will be selected in main analysis
       - "DynamicPredictions_ERFdynamicRSA_ROIsource.m" - main analysis script, which is called from "DynamicPredictions_pipeline.m"
@@ -69,4 +68,4 @@ The code is structured as follows:
 
 - Run dRSA simulations, and plotting
   - In the "simulations" subdirectory, you'll find the following scripts:
-    - 'XXX'
+    - "cluster_shell_simulations.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
