@@ -493,7 +493,7 @@ for iter = 1:cfg.randshuff(1)
 %         end
         
     % use regression to regress out principal components of other models
-    elseif cfg.glmRSA == 2
+    elseif cfg.glmRSA == 1
         models2regressout = [2:10; 1 3:10; 1 2 4:10; 1:3 5:10; 1:4 6:10; 1:5 7:10; 1:6 8:10; 1:7 9:10; 1:8 10; 1:9];
 
         % to attenuate effects of model autocorrelation, we regress out the model itself, a certain distance away from our time point of interest
