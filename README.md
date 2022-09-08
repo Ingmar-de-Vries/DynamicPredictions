@@ -18,7 +18,7 @@ The code is structured as follows:
     - In the subdirectory “experiment/stimuli”, you will find the 14 unique 5-second-long ballet dancing videos used in the experiment, plus the corresponding and temporally aligned 3D kinematic marker locations at 100 Hz, stored in Matlab matrices. 
     - The experiment script makes use of the following helper scripts also present in the experiment directory:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
-      - “CreateCatchTrials.m” – create pool of catch trials to pick from.
+      - “CreateCatchTrials.m” – create pool of catch trials that the experiment script randomly picks from on each run. 
 
   - Analysis and plotting of behavioural results
     - In the "behaviour" subdirectory, you will find the following script:
