@@ -15,6 +15,7 @@ The code is structured as follows:
   -	Experiment
     - In the “experiment” subdirectory, you will find the Matlab script “DynamicPredictions_MEGexperiment.m” 
     - You need Psychophysics Toolbox Version 3 (PTB-3) to run this experiment. 
+    - This experiment can in principle be run as a behaviour-only experiment, include eyetracking, or include eyetracking and MEG. However, I have only tested the latest version of this experiment in the MEG lab at CIMeC, using Matlab 2012b. You might need to make minor adjustments for your setup. 
     - In the subdirectory “experiment/stimuli”, you will find the 14 unique 5-second-long ballet dancing videos used in the experiment, plus the corresponding and temporally aligned 3D kinematic marker locations at 100 Hz, stored in Matlab matrices. 
     - The experiment script makes use of the following helper scripts also present in the experiment directory:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
