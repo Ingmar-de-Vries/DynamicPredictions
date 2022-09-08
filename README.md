@@ -67,5 +67,7 @@ The code is structured as follows:
       - "DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight.m" - plot searchlight results, in article: figure 2b and S6. Note that this is done partly using the Brainstorm GUI to create pretty cortical map figures. Go through this script line-by-line and read the comments if you want to create similar figures. 
 
 - Run dRSA simulations, and plotting
-  - In the "simulations" subdirectory, you'll find the following scripts:
+  - Note that the simulations are also called from the main "DynamicPredictions_pipeline.m" script. In the "simulations" subdirectory, you'll find the following scripts:
     - "cluster_shell_simulations.m" - used for sending analysis as parallel jobs to a computing cluster (e.g., with different subjects and ROIs in parallel).
+    - "DynamicPredictions_RUN_ERFdynamicRSA_simulations.m" - run simulations.
+    - "DynamicPredictions_PLOTS_ERFdynamicRSA_simulations.m" - plot simulations. 
