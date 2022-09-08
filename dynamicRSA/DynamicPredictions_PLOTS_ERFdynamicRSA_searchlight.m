@@ -1,10 +1,7 @@
 %% Prepare wholebrain source level dRSA values for cortical surface plot in Brainstorm
-% addpath(genpath('\\XXX\ActionPrediction\code'));
-% addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
-% cfg.path = '\\XXX\ActionPrediction';
-
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
-cfg = ActionPrediction_config(cfg);
+addpath(genpath('\\XXX\ActionPrediction\code'));
+addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
+cfg.path = '\\XXX\ActionPrediction';
 
 if cfg.glmRSA == 0
     corrORglm = 'corr';
