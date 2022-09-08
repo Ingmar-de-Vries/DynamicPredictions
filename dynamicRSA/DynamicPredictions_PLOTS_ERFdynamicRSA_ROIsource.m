@@ -12,7 +12,6 @@ models2plot = [1:7 10];
 maxLag = 1;% maximum lag to plot
 tRange=maxLag*cfg.downsample;% maximum lag in samples
 TimeVec = 0:1/cfg.downsample:5-cfg.randshuff(2)-1/cfg.downsample;% dRSA time vector
-% binVec = dsearchn(TimeVec',[0:ceil(max(TimeVec))]');
 
 TimeVec2 = -maxLag:1/cfg.downsample:maxLag;% time vector for dRSA lag plot (i.e., [-maxLag maxLag])
 binVec2 = [1  tRange+1  tRange*2+1];% for X-ticks in figure
@@ -30,7 +29,7 @@ fs = 7;
 if cfg.glmRSA == 0
     corrORglm = 'corr';
 elseif cfg.glmRSA == 1
-    corrORglm = ['pcaANDpcr_' num2str(cfg.nPCAcomps) 'comps'];
+    corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 indirSTAT = fullfile(cfg.path,'data','MEG',['source_' cfg.atlas],'RSA','statistics',[corrORglm '_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
 
@@ -55,7 +54,7 @@ RS_SEM = [];
 RS_ROIs = [];
 for iROI = 1:length(ROInames)
     
-    %% load data resulting from STATS script
+    %% load results from STATS script
     ROIname = ROInames{iROI};
     fn = sprintf('%s%cSTATS_p%s_p%s_fisherz%d_%dHz_%s_smMEG%d_smRDMneu%d_smRDMmod%d',indirSTAT, filesep, '01', '05', cfg.fisherz, cfg.downsample, ROIname, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
     load(fn,'omegaAll','rstackLine','signLine','RS','peakLatency');

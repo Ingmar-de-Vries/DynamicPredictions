@@ -28,7 +28,7 @@ indirEye = fullfile(cfg.path,'data','MEG','ELpreprocessed');
 if cfg.glmRSA == 0
     corrORglm = 'corr';
 elseif cfg.glmRSA == 1
-    corrORglm = ['pcaANDpcr_' num2str(cfg.nPCAcomps) 'comps'];
+    corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 outdir = fullfile(cfg.path,'data','MEG',['searchlight_' cfg.atlas],'RSA', [corrORglm '_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
 if ~exist(outdir,'dir')

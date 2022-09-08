@@ -6,7 +6,7 @@ cfg.path = '\\XXX\ActionPrediction';
 if cfg.glmRSA == 0
     corrORglm = 'corr';
 elseif cfg.glmRSA == 1
-    corrORglm = 'pcaANDpcr_75comps_';
+    corrORglm = 'pcr_75comps_';
 end
 
 % load measure you want to display

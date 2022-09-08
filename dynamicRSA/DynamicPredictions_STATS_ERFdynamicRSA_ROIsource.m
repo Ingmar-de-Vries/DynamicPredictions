@@ -19,7 +19,7 @@ ft_defaults
 if cfg.glmRSA == 0
     corrORglm = 'corr';
 elseif cfg.glmRSA == 1
-    corrORglm = ['pcaANDpcr_' num2str(cfg.nPCAcomps) 'comps'];
+    corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 
 %% input and output folders

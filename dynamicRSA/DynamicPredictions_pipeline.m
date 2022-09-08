@@ -78,7 +78,7 @@ DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight(cfg);
 %% simulations
 cfg.lag = 0;% in sec, at which lag to 'implant' the simulated model RDM
 cfg.randshuff(1) = 150;% for simulations fewer iterations are needed
-cfg.SimVec = [1:10 99];% models to simulate
+cfg.SimVec = [1:10 99];% models to simulate, 99 = only random neural data, no simulated model RDM
 cfg.ROIVec = 7;% only send once to cluster for single randomization
 cfg.iterationsPERbatch = 30;% for simulation iterations are send to the cluster in batches in parallel
 cfg.iterbatches = cfg.randshuff(1)./cfg.iterationsPERbatch;
@@ -88,5 +88,5 @@ cluster_shell_simulations(cfg,script2run);
 
 % plot main simulations
 cfg = rmfield(cfg,'cluster');
-ActionPrediction_PLOT_ERPdynRSA_sourceROIs_simulation(cfg);
+DynamicPredictions_PLOTS_ERFdynamicRSA_simulations(cfg);
 
