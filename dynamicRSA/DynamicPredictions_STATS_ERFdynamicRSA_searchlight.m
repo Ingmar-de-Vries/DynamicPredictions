@@ -1,31 +1,19 @@
 function DynamicPredictions_STATS_ERFdynamicRSA_searchlight(cfg,~,~)
 
-% % You can run this function locally (by looping over subjects), or send to a cluster (which I did using the accompanying "cluser_shell.m" function)
-% % set some directories depending on running this locally or on a cluster:
-% if isfield(cfg,'cluster')
-%     addpath('//XXX/ActionPrediction/toolboxes/fieldtrip-20191113');
-%     addpath(genpath('//XXX/ActionPrediction/code'));
-%     addpath(genpath('//XXX/matlab_toolboxes/CoSMoMVPA-master'));
-%     cfg.path = '//XXX/ActionPrediction'; 
-% else
-%     addpath('\\XXX\ActionPrediction\toolboxes\fieldtrip-20191113');
-%     addpath(genpath('\\XXX\ActionPrediction\code'));
-%     addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
-%     cfg.path = '\\XXX\ActionPrediction';
-% end
-% ft_defaults
-
-restoredefaultpath
+% You can run this function locally (by looping over subjects), or send to a cluster (which I did using the accompanying "cluser_shell.m" function)
+% set some directories depending on running this locally or on a cluster:
 if isfield(cfg,'cluster')
-    addpath('//mnt/storage/tier2/morwur/Projects/INGMAR/ActionPrediction/toolboxes/fieldtrip-20191113');
-    addpath('//mnt/storage/tier2/morwur/Projects/INGMAR/ActionPrediction/code/neuralDecoding');
+    addpath('//XXX/ActionPrediction/toolboxes/fieldtrip-20191113');
+    addpath(genpath('//XXX/ActionPrediction/code'));
+    addpath(genpath('//XXX/matlab_toolboxes/CoSMoMVPA-master'));
+    cfg.path = '//XXX/ActionPrediction'; 
 else
-    addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\toolboxes\fieldtrip-20191113');
-    addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
+    addpath('\\XXX\ActionPrediction\toolboxes\fieldtrip-20191113');
+    addpath(genpath('\\XXX\ActionPrediction\code'));
+    addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
+    cfg.path = '\\XXX\ActionPrediction';
 end
-
 ft_defaults
-cfg = ActionPrediction_config(cfg);
 
 if cfg.glmRSA == 0
     corrORglm = 'corr';
