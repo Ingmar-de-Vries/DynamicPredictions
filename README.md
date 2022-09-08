@@ -20,9 +20,10 @@ The code is structured as follows:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
       - “CreateCatchTrials.m” – create pool of catch trials to pick from.
 
-  - Analysis and plotting of behavioural results on catch trials
-    - In the "behaviour" subdirectory, you will find the following scripts:
-      - "XXX"
+  - Analysis and plotting of behavioural results
+    - In the "behaviour" subdirectory, you will find the following script:
+      - "DynamicPredictions_AnalysisBehaviourCatchTrials.m" - behavioural analysis and plotting of Figure S1c.
+      - "plotSpread.m" - can be found in the "plotSpread" subdirectory, together with some helper functions, and is used for the dotcloud figure.
 
   -	Pre-processing of MEG and eyetracking data
     - Pre-processing of eyetracking data was done using custom written script "DynamicPredictions_eyetracking_asc2ft.m", which takes raw Eyelink data in asc format as input, and gives pre-processed eyetracking data in Fieldtrip format as output. This is subsequently used to create an eyetracker RDM per individual subject. 
