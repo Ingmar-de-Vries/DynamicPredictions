@@ -60,6 +60,7 @@ The code is structured as follows:
       - "DynamicPredictions_ERFdynamicRSA_searchlight.m" - searchlight analysis, which is called from "DynamicPredictions_pipeline.m"
       - "DynamicPredictions_STATS_ERFdynamicRSA_searchlight.m" - statistics on searchlight analysis. 
       - "fdr_bh.m" - FDR correction for statistics on searchlight analysis. This function is called in "DynamicPredictions_STATS_ERFdynamicRSA_searchlight.m"
+      - "DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight.m" - plot searchlight results, in article: figure 2b and S6. Note that this is done partly using the Brainstorm GUI to create pretty cortical map figures. Go through this script line-by-line and read the comments if you want to create similar figures. 
 
 - Run dRSA simulations, and plotting
   - In the "simulations" subdirectory, you'll find the following scripts:
