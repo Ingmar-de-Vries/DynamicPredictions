@@ -25,7 +25,7 @@ indirEye = fullfile(cfg.path,'data','MEG','ELpreprocessed');
 if cfg.glmRSA == 0
     corrORglm = 'corr';
 elseif cfg.glmRSA == 1
-    corrORglm = ['pcaANDpcr_' num2str(cfg.nPCAcomps) 'comps'];
+    corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 outdir = fullfile(cfg.path,'data','MEG',['source_' cfg.atlas],'RSA', 'simulations', [corrORglm '_' num2str(cfg.lag*1000) 'lag_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
 if ~exist(outdir,'dir')
@@ -336,7 +336,9 @@ for iter = iterations
     end
     
     % Implant model RDM into randomized neural RDM
-    neuralRDM = randomNeuralRDMweight*neuralRDM + RDM2implant;
+    if simmod ~= 99% if simmod == 99, we only simulated random neural data without implanted model RDM, just to confirm we don't get any meaningful patterns in the dRSA results
+        neuralRDM = randomNeuralRDMweight*neuralRDM + RDM2implant;
+    end
     
     %% prepare and re-align model RDM for current iteration
     modelRDMsquare = zeros(length(cfg.dynRDMnames),nstim,nstim,cfg.downsample*(triallengthsec+cfg.randshuff(2)));
