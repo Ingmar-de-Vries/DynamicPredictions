@@ -1,9 +1,9 @@
 close all; clearvars; clc
 
 % input and output directories
-StimDir = '\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\experiment\Stimuli\sequences_final\videos';
-DataDir = '\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\data\modelRDMs';
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\Code\modelRDMs');
+StimDir = '\\XXX\ActionPrediction\experiment\stimuli\videos';
+DataDir = '\\XXX\ActionPrediction\data\modelRDMs';
+addpath('\\XXX\ActionPrediction\Code\modelRDMs');
 
 vidNames = dir(fullfile(StimDir, '*.mp4'));
     
