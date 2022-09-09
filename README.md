@@ -39,14 +39,15 @@ The code is structured as follows:
       - "DynamicPredictions_MEGpp8_epoch_singletrialDCcorrection.m" - epoch and single-trial baseline correction.
       - "DynamicPredictions_MEGpp9_export2FT.m" - export from Brainstorm to Fieldtrip format.
       - "DynamicPredictions_MEGpp10_realign2photodiode.m" - realign single trials to photodiode. This script is called from MEGpp9. 
-      - "DynamicPredictions_MEGppSource1_computeInversionKernel.m" - Apply minimum norm estimation (MNE) and store resulting inversion kernel to transform sensor level data to source level data outside of Brainstorm (which I do in the main dynamic RSA analysis script). 
+      - "DynamicPredictions_MEGppSource1_computeInversionKernel.m" - apply minimum norm estimation (MNE) and store resulting inversion kernel to transform sensor level data to source level data outside of Brainstorm (which I do in the main dynamic RSA analysis script). 
       - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
   -	Create model RDMs
     - RDMs based on video data and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below). However, for the 6 RDMs based on kinematic marker data (absolute and relative body posture, motion, and acceleration), these are created inside the resampling iteration in the main script, because relative body posture, motion and acceleration can only be computed after realigning the 3-sec resampled sequences to each other. The pre-created RDMs have size 14x14x250x250 (i.e., stim1 x stim2 x timestim1 x timestim2) at 50 Hz. 
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_DynamicModelRDMs_eyeTracker.m" - create dynamic RDM of individual subject eyetracking data. Either run locally or send to cluster. 
-      - "D"
+      - "DynamicPredictions_DynamicModelRDMs_pixelwise.m" - create dynamic RDM of smoothed grayscale pixelwise luminance values. 
+      - "DynamicPredictions_video2vector.m" - create smoothed grayscale vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_pixelwise.m".
 
   - Run dRSA analysis, statistics, and plotting
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
