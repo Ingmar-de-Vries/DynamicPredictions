@@ -48,6 +48,8 @@ The code is structured as follows:
       - "DynamicPredictions_DynamicModelRDMs_eyeTracker.m" - create dynamic RDM of individual subject eyetracking data.
       - "DynamicPredictions_DynamicModelRDMs_pixelwise.m" - create dynamic RDM of smoothed grayscale pixelwise luminance values. 
       - "DynamicPredictions_video2vector.m" - create smoothed grayscale vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_pixelwise.m".
+      - "DynamicPredictions_DynamicModelRDMs_opticalflow.m" - create dynamic RDM of optical flow vectors.
+      - "DynamicPredictions_video2opticalflow.m" - create optical flow vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_opticalflow.m".
 
   - Run dRSA analysis, statistics, and plotting
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
