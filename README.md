@@ -51,6 +51,7 @@ The code is structured as follows:
       - "DynamicPredictions_video2vector.m" - create smoothed grayscale vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_pixelwise.m".
       - "DynamicPredictions_DynamicModelRDMs_opticalflow.m" - create dynamic RDM of optical flow vectors.
       - "DynamicPredictions_video2opticalflow.m" - create optical flow vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_opticalflow.m".
+      - "DynamicPredictions_exampleFigureModels.m" - plots illustrations of the different models for a single frame of 2 vieos. It was used for creating Figure S2 in the article. This script also contains information about where each of the 13 kinematic markers were located on the ballet dancer's body.
 
   - Run dRSA analysis, statistics, and plotting
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
