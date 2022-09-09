@@ -13,13 +13,14 @@ Note that this custom-written code uses several functions from the Brainstorm, F
 The code is structured as follows:
 
   -	Experiment
-    - In the “experiment” subdirectory, you will find the Matlab script “DynamicPredictions_MEGexperiment.m” 
+    - In the “experiment” subdirectory, you will find the experiment script “DynamicPredictions_MEGexperiment.m” 
     - You need Psychophysics Toolbox Version 3 (PTB-3) to run this experiment. 
     - This experiment can in principle be run as a behaviour-only experiment, include eyetracking, or include eyetracking and MEG. However, I have only tested the latest version of this experiment in the MEG lab at CIMeC, using Matlab 2012b. You might need to make minor adjustments for your setup. 
     - In the subdirectory “experiment/stimuli”, you will find the 14 unique 5-second-long ballet dancing videos used in the experiment, plus the corresponding and temporally aligned 3D kinematic marker locations at 100 Hz, stored in Matlab matrices. 
     - The experiment script makes use of the following helper scripts also present in the experiment directory:
       - “angle2pix.m” – transform degrees of visual angle to pixels on screen
       - “CreateCatchTrials.m” – create pool of catch trials that the experiment script randomly picks from on each run. 
+    - In this subdirectory you will additionally find the script "DynamicPredictions_exampleFigure_videoANDstickfigure.m", which plots some example video frames and the respective stick figures based on the kinematic markers. It was used for creating Figure 1a and b in the article. This script also contains information about where each of the 13 kinematic markers were located on the ballet dancer's body. 
 
   - Analysis and plotting of behavioural results
     - In the "behaviour" subdirectory, you will find the following script:
