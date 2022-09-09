@@ -117,15 +117,15 @@ neuralID(end) = [];
 modelID = 1:triallengthsec*cfg.downsample;
         
 %% load model RDMs
-load([indirModel filesep 'ActionPrediction_dynRDM_graysmooth'],'RDMgraysmooth');
-load([indirModel filesep 'ActionPrediction_dynRDM_opticalFlow'],'RDMopticalflow_FB','RDMopticalflow_FBmag');
+load([indirModel filesep 'DynamicPredictions_dynRDM_graysmooth'],'RDMgraysmooth');
+load([indirModel filesep 'DynamicPredictions_dynRDM_opticalFlow'],'RDMopticalflow_dir','RDMopticalflow_mag');
 
 dynRDM{1} = RDMgraysmooth;
-dynRDM{2} = RDMopticalflow_FBmag;
-dynRDM{3} = RDMopticalflow_FB;
+dynRDM{2} = RDMopticalflow_mag;
+dynRDM{3} = RDMopticalflow_dir;
 
 % clear up workspace
-clear RDMgraysmooth RDMopticalflow_FBmag RDMopticalflow_FB
+clear RDMgraysmooth RDMopticalflow_mag RDMopticalflow_dir
 
 % Kinematic models need to be computed inside the resampling loop, because
 % procrustes alignment needs to be done after randomly re-aligning the data
