@@ -22,7 +22,7 @@ for iMovie1=1:length(vidNames)
         %Call function to extract smoothed grayscale pixelwise luminance values as vector representations for second video
         cfg = [];
         cfg.videoName = fullfile(StimDir,vidNames(iMovie2).name);
-        [~,~,~, vecrepGRAYSMOOTH2] = ProjectAction_video2vector(cfg);
+        [~,~,~, vecrepGRAYSMOOTH2] = DynamicPredictions_video2vector(cfg);
 
         clc;
         disp(['Correlating video ' num2str(iMovie1) ' with ' num2str(iMovie2)]);
