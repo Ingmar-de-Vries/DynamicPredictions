@@ -10,6 +10,8 @@ For details regarding this experiment, stimuli and analysis code, please see met
 
 Note that this custom-written code uses several functions from the Brainstorm, Fieldtrip and EEGLAB toolboxes. 
 
+An example dataset with which all analysis code can be tested is available on OSF (), see more information in the "example_dataset_readme.txt" file included in this repository. 
+
 The code is structured as follows:
 
   -	Experiment
