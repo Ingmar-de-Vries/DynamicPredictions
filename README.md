@@ -8,7 +8,7 @@ This article presents a new dynamic extension to the influential representationa
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
-Note that this custom-written code uses several functions from the Brainstorm (tested version:), Fieldtrip (tested version) and EEGLAB (tested version: toolboxes, and was written and tested in Matlab 2020a.  
+Note that this custom-written code uses several functions from the Brainstorm (tested version:), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019_1) toolboxes, and was written and tested in Matlab 2020a.  
 
 An example dataset with which all analysis code can be tested is available on OSF (), see more information in the "example_dataset_readme.txt" file included in this repository. 
 
