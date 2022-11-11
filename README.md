@@ -10,7 +10,7 @@ For details regarding this experiment, stimuli and analysis code, please see met
 
 Note that this custom-written code uses several functions from the Brainstorm (tested version: 3), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019.1) toolboxes, and was written and tested in Matlab 2020a.  
 
-An example dataset with which all analysis code can be tested is available on OSF (), see more information in the "example_dataset_readme.txt" file included in this repository. 
+An example dataset with which all analysis code can be tested is available on OSF (DOI: 10.17605/OSF.IO/ZK42F), see more information in the "example_dataset_readme.txt" file included in this repository. 
 
 The code is structured as follows:
 
