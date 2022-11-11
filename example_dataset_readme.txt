@@ -1,6 +1,6 @@
 Example anonymous dataset. Please notify me if any problems arise. A few notes about this dataset: 
 
-  - The dataset can be found at: OSFlink
+  - The dataset can be found at DOI: 10.17605/OSF.IO/ZK42F
   
   - This is a real dataset used in the study. Note that for privacy reasons, the individual anatomical scan is not included. This dataset only serves as a demo dataset for evaluation of the code. However, both the preprocessed data at sensor level and the inversion kernel to transform sensor level data to source level data are included. The inversion kernel is computed using the individual anatomical scan for this particular dataset. The combination of the example dataset and provided analysis code should allow one to reproduce the figures presented in the article (but in this case for a single subject instead of the full 22 subjects). 
   
