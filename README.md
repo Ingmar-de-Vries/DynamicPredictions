@@ -12,6 +12,8 @@ Note that this custom-written code uses several functions from the Brainstorm (t
 
 An example dataset with which all analysis code can be tested is available on OSF (DOI: 10.17605/OSF.IO/ZK42F), see more information in the "example_dataset_readme.txt" file included in this repository. 
 
+Additionally, a zipped folder titled 'Source Data' can be found at the same OSF link. This folder includes the single-subject data for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
+
 The code is structured as follows:
 
   -	Experiment
