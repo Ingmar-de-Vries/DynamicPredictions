@@ -4,7 +4,7 @@ This repository contains Matlab code accompanying the scientific article, curren
 
   -	The article is available at: https://doi.org/10.1101/2022.09.02.506366
 
-This article presents a new dynamic extension to the influential representational similarity analysis (RSA) approach, which allows investigating when naturalistic dynamic stimuli are represented in different parts of the brain, at different hierarchical levels of processing (e.g., low-level visual, body posture or motion of a ballet dancer). The code in this repository allows for exact replication of the dRSA pipeline as presented in the article, but is also meant as inspiration for people interested in using dRSA to answer their own research questions. In the near future I will generalize the code a bit more (e.g., less hard coding inside functions, more options, etc.) and create a separate repository dedicated to the dRSA method itself. In principle, dRSA can be applied to many different sensory modalities and contexts (e.g., naturalistic sound scenes, music, language), and on any signal with high enough temporal resolution (M/EEG, ECoG, eyetracking, etc.). Additionally,it should be straightforward to implement different dissimilarity measures for the neural and model RDMs, and a different similarity measure for the dRSA (i.e., here the principal component regression approach). We have found these to be most effective for the current experiment, as tested with the simulations.  
+This article presents a new dynamic extension to the influential representational similarity analysis (RSA) approach, which allows investigating when naturalistic dynamic stimuli are represented in different parts of the brain, at different hierarchical levels of processing (e.g., low-level visual, body posture or motion of a ballet dancer). The code in this repository allows for exact replication of the dRSA pipeline as presented in the article, but is also meant as inspiration for people interested in using dRSA to answer their own research questions. In the future I will generalize the code a bit more (e.g., less hard coding inside functions, more options, etc.) and create a separate repository dedicated to the dRSA method itself. In principle, dRSA can be applied to many different sensory modalities and contexts (e.g., naturalistic sound scenes, music, language), and on any signal with high enough temporal resolution (M/EEG, ECoG, eyetracking, etc.). Additionally, it should be straightforward to implement different dissimilarity measures for the neural and model RDMs, and a different similarity measure for the dRSA (i.e., here the principal component regression approach). We have found this similarity measure to be most effective for the current experiment, as tested with the simulations, but we have not extensively tested different dissimilarity measures.  
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
@@ -28,7 +28,7 @@ The code is structured as follows:
 
   - Analysis and plotting of behavioural results
     - In the "behaviour" subdirectory, you will find the following script:
-      - "DynamicPredictions_AnalysisBehaviourCatchTrials.m" - behavioural analysis and plotting of Figure S1c.
+      - "DynamicPredictions_AnalysisBehaviourCatchTrials.m" - behavioural analysis and plotting of Figure 4c.
       - "plotSpread.m" - can be found in the "plotSpread" subdirectory, together with some helper functions, and is used for the dotcloud figure.
 
   -	Pre-processing of MEG and eyetracking data
@@ -48,14 +48,14 @@ The code is structured as follows:
       - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
   -	Create model RDMs
-    - RDMs based on video data and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below). However, for the 6 RDMs based on kinematic marker data (absolute and relative body posture, motion, and acceleration), these are created inside the resampling iteration in the main script, because relative body posture, motion and acceleration can only be computed after realigning the 3-sec resampled sequences to each other. The pre-created RDMs have size 14x14x250x250 (i.e., stim1 x stim2 x timestim1 x timestim2) at 50 Hz. 
+    - RDMs based on video data, kinematic marker data, and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below), and if necessary up- or downsampled to 100 Hz. The pre-created RDMs therefore have size 14x14x500x500 (i.e., stim1 x stim2 x timestim1 x timestim2). 
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_DynamicModelRDMs_eyeTracker.m" - create dynamic RDM of individual subject eyetracking data.
       - "DynamicPredictions_DynamicModelRDMs_pixelwise.m" - create dynamic RDM of smoothed grayscale pixelwise luminance values. 
       - "DynamicPredictions_video2vector.m" - create smoothed grayscale vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_pixelwise.m".
       - "DynamicPredictions_DynamicModelRDMs_opticalflow.m" - create dynamic RDM of optical flow vectors.
       - "DynamicPredictions_video2opticalflow.m" - create optical flow vector representation of videos. Called from "DynamicPredictions_DynamicModelRDMs_opticalflow.m".
-      - "DynamicPredictions_exampleFigureModels.m" - plots illustrations of the different models for a single frame of 2 vieos. It was used for creating Figure S2 in the article. This script also contains information about where each of the 13 kinematic markers were located on the ballet dancer's body.
+      - "DynamicPredictions_exampleFigureModels.m" - plots illustrations of the different models for a single frame of 2 videos. It was used for creating Figure 5 in the article. This script also contains information about where each of the 13 kinematic markers were located on the ballet dancer's body.
 
   - Run dRSA analysis, statistics, and plotting
     - In the "dynamicRSA" subdirectory, you'll find the following scripts:
