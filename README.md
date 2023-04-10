@@ -10,7 +10,7 @@ For details regarding this experiment, stimuli and analysis code, please see met
 
 Note that the larger data files belonging to this repository are stored on a public OSF repository (DOI: 10.17605/OSF.IO/ZK42F; or look for Ingmar de Vries - DynamicPredictions, as the DOI does not seem to work for me). The OSF repository includes: 
   - An example dataset with which all analysis code can be tested. See more information in the "example_dataset_readme.txt" file included in this repository. 
-  - a zipped folder titled 'Source Data'. This folder includes the data of all 22 subjects for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
+  - A zipped folder titled 'Source Data'. This folder includes the data of all 22 subjects for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
   - The 9 model RDMs used in the reported study.
 
 Note that this custom-written code uses several functions from the Brainstorm (tested version: 3), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019.1) toolboxes, and was written and tested in Matlab 2020a.  
@@ -48,7 +48,7 @@ The code in this GitHub repository is structured as follows:
       - "DynamicPredictions_MEGppSource1_computeInversionKernel.m" - apply minimum norm estimation (MNE) and store resulting inversion kernel to transform sensor level data to source level data outside of Brainstorm (which I do in the main dynamic RSA analysis script). 
       - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
-  -	Create model RDMs
+  -	Create model RDMs (note that the 9 model RDMs themselves can be found in the OSF repository)
     - RDMs based on video data, kinematic marker data, and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below), and if necessary up- or downsampled to 100 Hz. The pre-created RDMs therefore have size 14x14x500x500 (i.e., stim1 x stim2 x timestim1 x timestim2). 
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_DynamicModelRDMs_eyeTracker.m" - create dynamic RDM of individual subject eyetracking data.
