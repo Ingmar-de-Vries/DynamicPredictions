@@ -39,7 +39,10 @@ ft_cfg.clusterstatistic = 'maxsum';
 ft_cfg.minnbchan = 1;
 ft_cfg.tail = addinfo.tail;
 ft_cfg.clustertail = addinfo.tail;
-ft_cfg.alpha = pthresh;
+ft_cfg.alpha = pthresh/2;
+if addinfo.tail == 1
+   ft_cfg.alpha = pthresh; 
+end
 
 % the more the better, but for the time-time plots anything more than 5000 takes a very long time
 if contains(testtype,'timefreq')

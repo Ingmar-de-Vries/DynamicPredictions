@@ -15,9 +15,9 @@ else
 end
 ft_defaults
 
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 
@@ -38,15 +38,15 @@ elseif contains(cfg.atlas,'Schaefer2018_200')
 end
 
 atlasALL = cell(numsource,length(cfg.sub4stat));
-omegaGA = zeros(length(cfg.sub4stat),numsource,length(cfg.peaks2test));
+dRSA_GA = zeros(length(cfg.sub4stat),numsource,length(cfg.peaks2test));
 for isub = cfg.sub4stat
     
     fn = sprintf('%s%cdRSA_SUB%02d_%dHz_smMEG%d_smRDMneu%d_smRDMmod%d',indir, filesep, isub, cfg.downsample, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
     fprintf('loading %s..\n',fn);
     
-    load(fn,'omegaAll','atlas');
+    load(fn,'dRSAall','atlas');
     
-    omegaGA(isub,:,:) = omegaAll;
+    dRSA_GA(isub,:,:) = dRSAall;
     atlasALL(:,isub) = extractfield(atlas,'Label'); 
     
     % used to check other subjects against to ensure atlases align across subjects
@@ -82,9 +82,9 @@ for isub = cfg.sub4stat
 % %         load('\\XXX\ActionPrediction\data\MEG\searchlight_Schaefer2018_400\new2oldSchaefer400','new2oldSchaefer400');
         
         % reorder data, first left-right, then remaining mismatch 
-        omegaAll = [omegaAll(lefties,:) ; omegaAll(~lefties,:)];
-        omegaAll = omegaAll(new2oldSchaefer400,:); 
-        omegaGA(isub,:,:) = omegaAll;
+        dRSAall = [dRSAall(lefties,:) ; dRSAall(~lefties,:)];
+        dRSAall = dRSAall(new2oldSchaefer400,:); 
+        dRSA_GA(isub,:,:) = dRSAall;
         atlas = atlas(new2oldSchaefer400);% change atlas names 
         atlasALL(:,isub) = extractfield(atlas,'Label'); 
     end
@@ -97,25 +97,25 @@ for isub = cfg.sub4stat
 end% subject loop
 
 if cfg.fisherz
-    omegaGA = atanh(omegaGA);
+    dRSA_GA = atanh(dRSA_GA);
 end
 
 %% Statistics
 fnSTATS = sprintf('%s%cSTATS_onesided_fisherz%d_%dHz_smMEG%d_smRDMneu%d_smRDMmod%d',outdir, filesep, cfg.fisherz, cfg.downsample, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
 
-pvals = zeros(size(omegaGA,2),size(omegaGA,3));
-tvals = zeros(size(omegaGA,2),size(omegaGA,3));
+pvals = zeros(size(dRSA_GA,2),size(dRSA_GA,3));
+tvals = zeros(size(dRSA_GA,2),size(dRSA_GA,3));
 FDR05 = pvals;
 FDR01 = pvals;
-for ipeak = 1:size(omegaGA,3)
+for ipeak = 1:size(dRSA_GA,3)
     
-    data2test = squeeze(omegaGA(:,:,ipeak));
+    data2test = squeeze(dRSA_GA(:,:,ipeak));
     
     if isnan(min(min(data2test))) && isnan(max(max(data2test)))
         
-        pvals(:,ipeak) = NaN(size(omegaGA,2),1);
-        FDR05(:,ipeak) = NaN(size(omegaGA,2),1);
-        FDR01(:,ipeak) = NaN(size(omegaGA,2),1);
+        pvals(:,ipeak) = NaN(size(dRSA_GA,2),1);
+        FDR05(:,ipeak) = NaN(size(dRSA_GA,2),1);
+        FDR01(:,ipeak) = NaN(size(dRSA_GA,2),1);
     else
         
         [~,p,~,stats] = ttest(data2test,0,'tail','right');
@@ -127,7 +127,7 @@ for ipeak = 1:size(omegaGA,3)
     
 end% peak loop
 
-omegaMean = squeeze(mean(omegaGA));
-save(fnSTATS,'omegaMean','atlasALL','tvals','pvals','FDR05','FDR01');
+dRSAmean = squeeze(mean(dRSA_GA));
+save(fnSTATS,'dRSAmean','atlasALL','tvals','pvals','FDR05','FDR01');
 
 end

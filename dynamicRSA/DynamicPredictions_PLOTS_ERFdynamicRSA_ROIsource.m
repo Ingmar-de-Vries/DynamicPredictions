@@ -26,9 +26,9 @@ lineColors(1,:) = lineColors(1,:) - .1;% second still too bright so we darken it
 fs = 7;
 
 %% input and output folders
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 indirSTAT = fullfile(cfg.path,'data','MEG',['source_' cfg.atlas],'RSA','statistics',[corrORglm '_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
@@ -43,7 +43,7 @@ rdmLabels = {'pixelwise grayscale','optical flow magnitude','optical flow direct
 
 % initialize variables
 peaksAll = zeros(length(cfg.SubVec),length(ROInames),length(rdmLabels),2);
-omegaROIs = [];
+dRSA_ROIs = [];
 % rstackROIs = [];
 rstackLineSEM = [];
 rstackLineROIs = [];
@@ -57,14 +57,14 @@ for iROI = 1:length(ROInames)
     %% load results from STATS script
     ROIname = ROInames{iROI};
     fn = sprintf('%s%cSTATS_p%s_p%s_fisherz%d_%dHz_%s_smMEG%d_smRDMneu%d_smRDMmod%d',indirSTAT, filesep, '01', '05', cfg.fisherz, cfg.downsample, ROIname, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
-    load(fn,'omegaAll','rstackLine','signLine','RS','peakLatency');
+    load(fn,'dRSAall','rstackLine','signLine','RS','peakLatency');
     
     % stricter significance threshold for additional significance bars in line plots and for posthoc representational spread (RS) analysis
     fn = sprintf('%s%cSTATS_p%s_p%s_fisherz%d_%dHz_%s_smMEG%d_smRDMneu%d_smRDMmod%d',indirSTAT, filesep, '001', '01', cfg.fisherz, cfg.downsample, ROIname, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
     strictSTATS = load(fn,'signLine','signRS');
     
     % combine data from all ROIs
-    omegaROIs(iROI,:,:,:) = squeeze(mean(omegaAll));
+    dRSA_ROIs(iROI,:,:,:) = squeeze(mean(dRSAall));
     rstackLineSEM(iROI,:,:) = squeeze(stdErrMean(rstackLine,1));
     rstackLineROIs(iROI,:,:) = squeeze(mean(rstackLine));
     RS_SEM(iROI,:,:,:) = squeeze(stdErrMean(RS,1));
@@ -148,7 +148,7 @@ end% iRDM
 
 %% time-time 2D dRSA plot
 % downsample because otherwise gigantic file size, and such a high resolution is not necessary anyway
-omegaROIs = omegaROIs(:,1:5:end,1:5:end,:);
+dRSA_ROIs = dRSA_ROIs(:,1:5:end,1:5:end,:);
 TimeVec = TimeVec(1:5:end);
 binVec = [1 20 40 60];
 
@@ -158,14 +158,14 @@ figure(2);
 set(gcf,'color','w');
 set(gcf, 'Units', 'centimeters');
 set(gcf, 'Position', [0 0 19 14]);
-climits = squeeze(max(max(max(abs(omegaROIs)),[],2),[],3));
+climits = squeeze(max(max(max(abs(dRSA_ROIs)),[],2),[],3));
 count = 0;
 for iROI = 1:length(cfg.ROIVec)
     for iRDM = 1:length(models2plot)
         count = count + 1;
         subplot(6,length(models2plot),count)
         hold on
-        contourf(TimeVec,TimeVec,squeeze(omegaROIs(iROI,:,:,iRDM)),60,'lineColor','none');
+        contourf(TimeVec,TimeVec,squeeze(dRSA_ROIs(iROI,:,:,iRDM)),60,'lineColor','none');
         plot(TimeVec,TimeVec,'--k','lineWidth',1)
         
         climit = climits(iRDM);
@@ -229,7 +229,7 @@ for iRDM = 1:length(models2plot)
             for isubROI = 1:size(SRI2plot,1)
                 if max(signLineROIs(isubROI,iRDM,:)) == 1
                     h(isubROI) = plot(TimeVec2,SRI2plot(isubROI,:),'color',lineColors(isubROI,:),'lineWidth',1.5);
-                    plot(TimeVec2,(-ylimit*0.2-(ylimit/18*(isubROI-1)))*squeeze(signRS_ROIs(isubROI,iRDM,:,2)),'lineWidth',3,'Color',lineColors(isubROI,:));
+                    plot(TimeVec2,(-ylimit*0.2-(ylimit/18*(isubROI-1)))*squeeze(signRS_ROIs(isubROI,iRDM,:,ipeak)),'lineWidth',3,'Color',lineColors(isubROI,:));
                 end
             end
             

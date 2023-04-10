@@ -16,9 +16,9 @@ else
 end
 ft_defaults
 
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 
@@ -46,7 +46,7 @@ modelautocorr_slopes(8:9,:) = [];
 for iROI = cfg.ROIVec
     
     %% load data, combine and average subjects
-    omegaAllperSub = zeros(cfg.subnum,(5-cfg.randshuff(2))*cfg.downsample,(5-cfg.randshuff(2))*cfg.downsample,length(cfg.models2test));
+    dRSAallperSub = zeros(cfg.subnum,(5-cfg.randshuff(2))*cfg.downsample,(5-cfg.randshuff(2))*cfg.downsample,length(cfg.models2test));
     subcount = 0;
     for isub = cfg.sub4stat
         subcount = subcount+1;
@@ -54,30 +54,30 @@ for iROI = cfg.ROIVec
         % load data
         fn = sprintf('%s%cdRSA_SUB%02d_%dHz_%s_smMEG%d_smRDMneu%d_smRDMmod%d',indir, filesep, isub, cfg.downsample, ROIdefinition.names{iROI}{:}, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
         fprintf('loading %s..\n',fn);        
-        load(fn,'omegaAll'); 
+        load(fn,'dRSAall'); 
 
         ROIname = ROIdefinition.names{iROI}{:};
 
         % fisher Z transform
         if cfg.fisherz
-            omegaAllperSub(subcount,:,:,:) = atanh(omegaAll);
+            dRSAallperSub(subcount,:,:,:) = atanh(dRSAall);
         else
-            omegaAllperSub(subcount,:,:,:) = omegaAll;
+            dRSAallperSub(subcount,:,:,:) = dRSAall;
         end
             
     end% subject loop
     
     % some parameters for plotting:
     maxLag = 1;% maximum lag to plot
-    TimeVec = 0:1/cfg.downsample:size(omegaAllperSub,2)/cfg.downsample-1/cfg.downsample;% dRSA time vector
+    TimeVec = 0:1/cfg.downsample:size(dRSAallperSub,2)/cfg.downsample-1/cfg.downsample;% dRSA time vector
     TimeVec2 = -maxLag:1/cfg.downsample:maxLag;% time vector for dRSA lag plot (i.e., [-maxLag maxLag])
     
     %slice neural vectors per model time point (i.e., locked to on-diagonal / zero lag in 2D dRSA plot), and then stack
     tRange=maxLag*cfg.downsample;% maximum lag in samples
     
-    rstack = zeros(cfg.subnum,size(omegaAllperSub,4),length(TimeVec),length(TimeVec2));
+    rstack = zeros(cfg.subnum,size(dRSAallperSub,4),length(TimeVec),length(TimeVec2));
     for isub = 1:cfg.subnum
-        for iRDM = 1:size(omegaAllperSub,4)
+        for iRDM = 1:size(dRSAallperSub,4)
             for iModelTime = 1:length(TimeVec)
                 
                 timeidx = iModelTime - tRange:iModelTime + tRange;% time indices for current slice
@@ -88,7 +88,7 @@ for iROI = cfg.ROIVec
                 timeidx(NotInVid) = 1;
                 
                 % extract slice from 2D dRSA matrix
-                slice = squeeze(omegaAllperSub(isub,iModelTime,timeidx,iRDM));
+                slice = squeeze(dRSAallperSub(isub,iModelTime,timeidx,iRDM));
                 
                 % now remove indices that fall before or after video
                 slice(NotInVid) = NaN;
@@ -209,18 +209,18 @@ for iROI = cfg.ROIVec
         
         %time-frequency (or time-time, as is the case here)
         testtype = 'multivar_timefreq';%univar_timeseries, univar_timefreq, univar_timefreqchan, multivar_timeseries, multivar_timefreq
-        signposOmega = false(size(omegaAllperSub,4),length(TimeVec),length(TimeVec));
-        signnegOmega = false(size(omegaAllperSub,4),length(TimeVec),length(TimeVec));
+        signposdRSA = false(size(dRSAallperSub,4),length(TimeVec),length(TimeVec));
+        signnegdRSA = false(size(dRSAallperSub,4),length(TimeVec),length(TimeVec));
 
-        for iRDM = 1:size(omegaAllperSub,4)
+        for iRDM = 1:size(dRSAallperSub,4)
             addinfo.time = TimeVec;
             addinfo.freq = TimeVec;% for 2D dRSA plot act as if second dimension is also time (instead of freq)
-            [~,signposOmega(iRDM,:,:),signnegOmega(iRDM,:,:)] = DynamicPredictions_runFTstats(squeeze(omegaAllperSub(:,:,:,iRDM)),addinfo,[],testtype,cfg.pthresh,cfg.pthreshclust,chance);
+            [~,signposdRSA(iRDM,:,:),signnegdRSA(iRDM,:,:)] = DynamicPredictions_runFTstats(squeeze(dRSAallperSub(:,:,:,iRDM)),addinfo,[],testtype,cfg.pthresh,cfg.pthreshclust,chance);
         end
-        signOmega = logical(signposOmega+signnegOmega);
+        signdRSA = logical(signposdRSA+signnegdRSA);
     
     else    
-        signOmega = 'Set cfg.timeXtime = 1 to run stats on 2D dRSA plot';        
+        signdRSA = 'Set cfg.timeXtime = 1 to run stats on 2D dRSA plot';        
     end
     
     % dRSA curve, i.e., after averaging 2D dRSA over stimulus time (after locking to on-diagonal) 
@@ -230,7 +230,7 @@ for iROI = cfg.ROIVec
     signposRS = false(size(rstackLine,2),size(rstackLine,3),2);
     signnegRS = false(size(rstackLine,2),size(rstackLine,3),2);
     
-    for iRDM = 1:size(omegaAllperSub,4)
+    for iRDM = 1:size(dRSAallperSub,4)
         
         addinfo.time = TimeVec2;
         addinfo.tail = 1;% only positive tail
@@ -246,8 +246,8 @@ for iROI = cfg.ROIVec
     signLine = logical(signposLine+signnegLine);
     signRS = logical(signposRS+signnegRS);
     
-    omegaAll = omegaAllperSub;
-    save(fnSTATS,'omegaAll','rstack','rstackLine','RS','peakLatency','signLine','signRS','signOmega','ROIname');
+    dRSAall = dRSAallperSub;
+    save(fnSTATS,'dRSAall','rstack','rstackLine','RS','peakLatency','signLine','signRS','signdRSA','ROIname');
     
 end
 

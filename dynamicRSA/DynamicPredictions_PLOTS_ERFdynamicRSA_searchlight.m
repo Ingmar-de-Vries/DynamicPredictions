@@ -3,16 +3,16 @@ addpath(genpath('\\XXX\ActionPrediction\code'));
 addpath(genpath('\\XXX\matlab_toolboxes\CoSMoMVPA-master'));
 cfg.path = '\\XXX\ActionPrediction';
 
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = 'pcr_75comps_';
 end
 
 % load measure you want to display
 indir = fullfile(cfg.path,'data','MEG',['searchlight_' cfg.atlas],'RSA','statistics',[corrORglm num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
 fn = sprintf('%s%cSTATS_onesided_fisherz%d_%dHz_smMEG%d_smRDMneu%d_smRDMmod%d',outdir, filesep, cfg.fisherz, cfg.downsample, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
-load(fn,'atlasALL','omegaMean','pvals','FDR05','FDR01');
+load(fn,'atlasALL','dRSAmean','pvals','FDR05','FDR01');
 
 % this can be any colormap of your preference
 % we save it here, and manually import it into the Brainstorm GUI as colormap:
@@ -34,8 +34,8 @@ atlasBST(idx2remove) = [];
 
 % give each vertex value according to it's location in atlas
 FDR = 1;
-valuePERvertex = zeros(15002,size(omegaMean,2));
-for ipeak = 1:size(omegaMean,2)
+valuePERvertex = zeros(15002,size(dRSAmean,2));
+for ipeak = 1:size(dRSAmean,2)
         
     if FDR
         % for FDR corrected, only color parcels that survive a certain threshold:
@@ -47,7 +47,7 @@ for ipeak = 1:size(omegaMean,2)
 
     for iroi = roi2color
         vertPERroi = extractfield(atlasBST(iroi),'Vertices');
-        valuePERvertex(vertPERroi,ipeak) = omegaMean(iroi,ipeak);
+        valuePERvertex(vertPERroi,ipeak) = dRSAmean(iroi,ipeak);
     end
 end
 

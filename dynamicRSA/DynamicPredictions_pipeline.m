@@ -2,15 +2,15 @@ close all; clearvars; clc
 addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
 
 % Parameters for creating neural RDM
-cfg.cluster=1;% 1 = run on cluster, 2 = run locally
+cfg.cluster = 1;% 1 = run on cluster, 2 = run locally
 cfg.SubVec = 1:22;% 
 cfg.smoothingMSec = 20; % smoothing kernel across time, in msec. Applied before creating neural RDM.  
 cfg.downsample = 100;% downsample neural data before creating neural RDM.  
 
 % Parameters for dynamic RSA
-cfg.smoothNeuralRDM=2;% smoothing of neural RDM. In samples, so with fs = 100 Hz, 20 msec smoothing = 2 samples
-cfg.smoothModelRDM=2;% in samples
-cfg.glmRSA=1;% which measure to use for computing similarity between neural and model RDM: 0 = correlation, 1 = principal component regression (PCR) weights
+cfg.smoothNeuralRDM = 3;% smoothing of neural RDM. In samples, so with fs = 100 Hz, 20 msec smoothing = 2 samples
+cfg.smoothModelRDM = 3;% in samples
+cfg.similarity = 1;% which measure to use for computing similarity between neural and model RDM: 0 = correlation, 1 = principal component regression (PCR) weights
 cfg.nPCAcomps = 75;% maximum amount of PCA components to regress out
 cfg.nstim = 14;% number of unique video sequences
 cfg.randshuff = [1000 2];% first value indicates amount of iterations, second value indicates maximum start time in sec of resampled sequence, i.e., 2 indicates the original 5 sec trials will be randomly resampled to 3 second trials on each iteration
@@ -77,10 +77,10 @@ DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight(cfg);
 
 %% simulations
 cfg.lag = 0;% in sec, at which lag to 'implant' the simulated model RDM
-cfg.randshuff(1) = 150;% for simulations fewer iterations are needed
+cfg.randshuff(1) = 50;% for simulations fewer iterations are needed
 cfg.SimVec = [1:10 99];% models to simulate, 99 = only random neural data, no simulated model RDM
-cfg.ROIVec = 7;% only send once to cluster for single randomization
-cfg.iterationsPERbatch = 30;% for simulation iterations are send to the cluster in batches in parallel
+cfg.SubVec = 1:22;
+cfg.iterationsPERbatch = 50;% for simulation iterations are send to the cluster in batches in parallel
 cfg.iterbatches = cfg.randshuff(1)./cfg.iterationsPERbatch;
 cfg.randweight = 0;% weight of random neural RDM (noise) to which simulated model will be added, weight of zero means no random neural RDM
 script2run = 'DynamicPredictions_RUN_ERFdynamicRSA_simulations';
