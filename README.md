@@ -10,11 +10,12 @@ For details regarding this experiment, stimuli and analysis code, please see met
 
 Note that this custom-written code uses several functions from the Brainstorm (tested version: 3), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019.1) toolboxes, and was written and tested in Matlab 2020a.  
 
-An example dataset with which all analysis code can be tested is available on OSF (DOI: 10.17605/OSF.IO/ZK42F), see more information in the "example_dataset_readme.txt" file included in this repository. 
+Note that the larger data files belonging to this repository are stored on a public OSF repository (DOI: 10.17605/OSF.IO/ZK42F; or look for Ingmar de Vries - DynamicPredictions, as the DOI does not seem to work for me). The OSF repository includes: 
+  - An example dataset with which all analysis code can be tested. See more information in the "example_dataset_readme.txt" file included in this repository. 
+  - a zipped folder titled 'Source Data'. This folder includes the data of all 22 subjects for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
+  - The 9 model RDMs used in the reported study.
 
-Additionally, a zipped folder titled 'Source Data' can be found at the same OSF link. This folder includes the single-subject data for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
-
-The code is structured as follows:
+The code in this GitHub repository is structured as follows:
 
   -	Experiment
     - In the “experiment” subdirectory, you will find the experiment script “DynamicPredictions_MEGexperiment.m” 
