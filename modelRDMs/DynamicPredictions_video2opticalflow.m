@@ -23,8 +23,9 @@ while hasFrame(vidReader)
     
     % estimate optical flow field
     flowFB = estimateFlow(opticFlow,frameGray);
-    matrep_dir(iframe,1,:,:) = flowFB.Vx;
-    matrep_dir(iframe,2,:,:) = flowFB.Vy;
+    
+    matrep_dir(iframe,1,:,:) = cos(flowFB.Orientation);
+    matrep_dir(iframe,2,:,:) = sin(flowFB.Orientation);
     matrep_mag(iframe,:,:) = flowFB.Magnitude;
     
 end
