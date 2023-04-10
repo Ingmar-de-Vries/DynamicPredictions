@@ -48,8 +48,9 @@ The code in this GitHub repository is structured as follows:
       - "DynamicPredictions_MEGppSource1_computeInversionKernel.m" - apply minimum norm estimation (MNE) and store resulting inversion kernel to transform sensor level data to source level data outside of Brainstorm (which I do in the main dynamic RSA analysis script). 
       - "DynamicPredictions_storeManualBadTrials.m" - store manually detected bad trials, see script for comments
 
-  -	Create model RDMs (note that the 9 model RDMs themselves can be found in the OSF repository)
-    - RDMs based on video data, kinematic marker data, and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below), and if necessary up- or downsampled to 100 Hz. The pre-created RDMs therefore have size 14x14x500x500 (i.e., stim1 x stim2 x timestim1 x timestim2). 
+  -	Create model RDMs
+    - The 9 model RDMs themselves can be found in the OSF repository. 
+    - RDMs based on video data, kinematic marker data, and eyetracker data are created outside of the main "DynamicPredictions_ERFdynamicRSA_ROIsource.m" script (see section "Run dRSA analysis" below), and if necessary up- or downsampled to 100 Hz. The pre-created RDMs therefore have size 14x14x500x500 (i.e., stim1 x stim2 x timestim1 x timestim2). This is done to save computation time in the dRSA pipeline, i.e., the RDMs only need to be loaded in, not computed each time the dRSA script is run. 
     - In the "modelRDMs" subdirectory, you'll find the following scripts:
       - "DynamicPredictions_DynamicModelRDMs_eyeTracker.m" - create dynamic RDM of individual subject eyetracking data.
       - "DynamicPredictions_DynamicModelRDMs_pixelwise.m" - create dynamic RDM of smoothed grayscale pixelwise luminance values. 
