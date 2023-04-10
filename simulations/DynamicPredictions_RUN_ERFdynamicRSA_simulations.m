@@ -19,12 +19,11 @@ nstim = cfg.nstim;
 
 %% input and output folders
 indirModel = fullfile(cfg.path,'data','modelRDMs');
-indirKin = fullfile(cfg.path,'experiment','Stimuli','sequences_final','kinematics100Hz');
 indirEye = fullfile(cfg.path,'data','MEG','ELpreprocessed');
 
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 outdir = fullfile(cfg.path,'data','MEG',['source_' cfg.atlas],'RSA', 'simulations', [corrORglm '_' num2str(cfg.lag*1000) 'lag_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
@@ -41,18 +40,11 @@ end
 
 %% time definitions
 TimeVec2 = -1:1/cfg.downsample:1;% time for lag-plot in seconds, used to define lag at which simulated model RDM will be 'implanted'
-fsVid = 50;% sample rate videos (for video-based RDMs)
 fsKin = 100;% sample rate kinematic recordings
-tVid = 0:1/fsVid:5-1/fsVid;
 tKin = 0:1/fsKin:5-1/fsKin;
 zerolag = ceil(length(TimeVec2)./2);% for the simulations
 triallengthsec = 5;
 newtimelength = (triallengthsec-cfg.randshuff(2))*cfg.downsample;
-% tNew and t4deriv are only used for interpolation of derivatives of kinematic models
-tNew = 0:1/cfg.downsample:triallengthsec+cfg.randshuff(2)-1/cfg.downsample;% after resampling
-t4deriv = tNew+(1/cfg.downsample)/2;% timesteps in between for any derivative (e.g., position --> motion, or motion --> acceleration)
-t4deriv(end) = [];
-modelID = 1:triallengthsec*cfg.downsample;
 
 %%  set weights for random neural RDM to which simulated model RDM will be added, if zero there is no random neural RDM
 randomNeuralRDMweight = cfg.randweight;
@@ -64,70 +56,28 @@ if simmod == 99
 end
 
 %% load model RDMs
-load([indirModel filesep 'DynamicPredictions_dynRDM_graysmooth'],'RDMgraysmooth');
-load([indirModel filesep 'DynamicPredictions_dynRDM_opticalFlow'],'RDMopticalflow_dir','RDMopticalflow_mag');
+load([indirModel filesep 'ActionPrediction_dynRDM_graysmooth'],'RDMgraysmooth');
+load([indirModel filesep 'ActionPrediction_dynRDM_OFmag'],'RDMoptflow_mag');
+load([indirModel filesep 'ActionPrediction_dynRDM_OFdir'],'RDMoptflow_dir');
+load([indirModel filesep 'ActionPrediction_dynRDM_posturedep'],'RDMposture_dep');
+load([indirModel filesep 'ActionPrediction_dynRDM_postureinvar'],'RDMposture_invar');
+load([indirModel filesep 'ActionPrediction_dynRDM_motiondep'],'RDMmotion_dep');
+load([indirModel filesep 'ActionPrediction_dynRDM_motioninvar'],'RDMmotion_invar');
+load([indirModel filesep 'ActionPrediction_dynRDM_accdep'],'RDMacc_dep');
+load([indirModel filesep 'ActionPrediction_dynRDM_accinvar'],'RDMacc_invar');
 
 dynRDM{1} = RDMgraysmooth;
-dynRDM{2} = RDMopticalflow_mag;
-dynRDM{3} = RDMopticalflow_dir;
+dynRDM{2} = RDMoptflow_mag;
+dynRDM{3} = RDMoptflow_dir;
+dynRDM{4} = RDMposture_dep;
+dynRDM{5} = RDMposture_invar;
+dynRDM{6} = RDMmotion_dep;
+dynRDM{7} = RDMmotion_invar;
+dynRDM{8} = RDMacc_dep;
+dynRDM{9} = RDMacc_invar;
 
 % clear up workspace
-clear RDMgraysmooth RDMopticalflow_mag RDMopticalflow_dir
-
-% Kinematic models need to be computed inside the iteration loop, because
-% procrustes alignment needs to be done after randomly re-aligning the data
-% Here we first simply load the kinematic data once
-kinNames = dir(fullfile(indirKin, '*.mat'));
-
-seqs = zeros(length(kinNames),13,3,500);
-for iseq=1:length(kinNames)
-    
-    load(fullfile(indirKin, kinNames(iseq).name),'Trajs');
-    seqs(iseq,:,:,:) = Trajs;
-    
-end
-
-% linear interpolation of models to meet the neural sample frequency
-% kinematic marker data
-if fsKin ~= cfg.downsample
-    tempall = zeros(size(seqs,1),size(seqs,2),size(seqs,3),length(tKin));
-    for istim = 1:size(seqs,1)
-        for imarker = 1:size(seqs,2)
-            for idim = 1:size(seqs,3)
-                
-                temp = squeeze(seqs(istim,imarker,idim,:));
-                temp = interp1(tKin,temp,tKin,'pchip','extrap');
-                tempall(istim,imarker,idim,:) = temp;
-                
-            end% dimensions loop
-        end% marker loop
-    end% stimuli loop
-    
-    seqs = tempall;
-end
-clear tempall
-
-% video-based data
-if fsVid ~= cfg.downsample
-    for iRDM = [1 2 3]%10 if semantic is included
-        
-        tempall = zeros(size(dynRDM{1},1),size(dynRDM{1},1),length(tKin),length(tKin));
-        for istim1 = 1:size(dynRDM{1},1)
-            for istim2 = 1:size(dynRDM{1},1)
-                
-                temp = squeeze(dynRDM{iRDM}(istim1,istim2,:,:));
-                % bilinear interpolation:
-                temp = interp1(tVid,temp,tKin,'pchip','extrap');
-                temp = interp1(tVid,temp',tKin,'pchip','extrap')';
-                tempall(istim1,istim2,:,:) = temp;
-                
-            end% second stimuli loop
-        end% first stimuli loop
-        
-        dynRDM{iRDM} = tempall;
-    end% model loop
-end% if loop
-clear tempall
+clear RDMgraysmooth RDMopticalflow_FBmag RDMopticalflow_FB RDMposture_dep RDMposture_invar RDMmotion_dep RDMmotion_invar RDMacc_dep RDMacc_invar
 
 %% load and prepare eyetracker RDMs
 fn= sprintf('%s%cSUB%02d_dynRDM_eyeTracker',indirEye, filesep, eyeSub);
@@ -150,157 +100,43 @@ shuffleTime = round((rand(cfg.randshuff(1),nstim)*(cfg.randshuff(2)-1/cfg.downsa
 iterations = 1+(iterbatch-1)*cfg.iterationsPERbatch:iterbatch*cfg.iterationsPERbatch;% iterations in this batch
 
 % initialize
-omegaPerIter = zeros(length(iterations),newtimelength,newtimelength,length(cfg.dynRDMnames));
+dRSAperIter = zeros(length(iterations),newtimelength,newtimelength,length(cfg.dynRDMnames));
 for iter = iterations
     
     % determine indices for stimulus-specific re-alignment for current iteration
     shuffleIDmodel = dsearchn(tKin',shuffleTime(iter,:)')';
     
-    % tstart is where the stimulus model should start after shifting it in order to align it with others (relative to t = 0, which is cfg.randshuff(2)*cfg.downsample)
-    tstart = cfg.randshuff(2)*cfg.downsample-shuffleIDmodel+1;
-    
     %% prepare and add model RDM to random neural RDM to create simulated RDM (or without random neural RDM if cfg.randweight = 0)
     
     % randomize neural RDM as basis for simulated neural RDM, random uniformly distributed numbers between 0 and 2
-    neuralRDM = 2*rand((nstim*nstim-nstim)./2,cfg.downsample*(triallengthsec+cfg.randshuff(2)));
+    neuralRDM = 2*rand((nstim*nstim-nstim)./2,cfg.downsample*(triallengthsec-cfg.randshuff(2)));
+    
+    % smooth simulated neural RDM across time
+    if cfg.smoothNeuralRDM
+        neuralRDM = ft_preproc_smooth(neuralRDM,cfg.smoothNeuralRDM);
+    end
     
     % create model RDM that will be implanted into the random neural RDM according to [lag X model] weight matrix in simWeights
-    RDM2implant = zeros(nstim,nstim,cfg.downsample*(triallengthsec+cfg.randshuff(2)));
+    RDM2implant = zeros(nstim,nstim,cfg.downsample*(triallengthsec-cfg.randshuff(2)));
     for istim1 = 1:nstim
         for istim2 = 1:nstim
             
-            % realignment happens by creating a new time vector (tKin4extrap) which is used for interpolating data to new time
-            % advantage of this instead of simply selecting the 3-sec data, is that you can keep the non-selected data for a little longer as padding,
-            % so there's less chance of potential edge artifacts, e.g., when temporally smoothing the RDMs. Padding will be cut later on. This
-            % inevitably leads to some time window without data, in which now data will be interpolated. This is meaningless data, but this doesn't
-            % matter as it is only part of the padding that will be cut off anyway
-            tKin4extrap1 = [-tstart(istim1)/cfg.downsample:1/cfg.downsample:tKin(1) tKin(2:end-1) tKin(end):1/cfg.downsample:tKin(end)+(cfg.randshuff(2)*cfg.downsample-tstart(istim1))/cfg.downsample];
-            tKin4extrap2 = [-tstart(istim2)/cfg.downsample:1/cfg.downsample:tKin(1) tKin(2:end-1) tKin(end):1/cfg.downsample:tKin(end)+(cfg.randshuff(2)*cfg.downsample-tstart(istim2))/cfg.downsample];
+            tNewID1 = shuffleIDmodel(istim1):shuffleIDmodel(istim1)+(triallengthsec-cfg.randshuff(2))*cfg.downsample-1;
+            tNewID2 = shuffleIDmodel(istim2):shuffleIDmodel(istim2)+(triallengthsec-cfg.randshuff(2))*cfg.downsample-1;
             
-            if simmod < 4 || simmod > 9% dynRDM already computed, just extract correct windows
+            lags = find(simWeights(implant,:) ~= 0);
+            for ilag = 1:length(lags)% loop over different lags at which current model is implanted
                 
-                % loop over different lags at which current model is simulated 
-                lags = find(simWeights(simmod,:) ~= 0);
-                for ilag = 1:length(lags)
-                    
-                    currentlag = lags(ilag);
-                    weight = simWeights(simmod,currentlag);
-                    lag2implant = currentlag - zerolag;
-                    lag2implant = lag2implant / cfg.downsample;%change from samples to seconds
-                    
-                    % select time window for resampling + simulation lag
-                    temptrial = interp1(tKin,squeeze(dynRDM{simmod}(istim1,istim2,modelID,modelID)),tKin4extrap1-lag2implant,'pchip','extrap');
-                    temptrial = interp1(tKin,temptrial',tKin4extrap2-lag2implant,'pchip','extrap')';
-                    
-                    % keep extrapolated values within boundaries, because they become extreme sometimes, which could be a problem for rescaling the RDMs below
-                    % find max value in the 'real data window', i.e., without the padding which contains extreme extrapolated values
-                    maxval = max(max(temptrial(tstart(istim1):tstart(istim1)+length(modelID),tstart(istim2):tstart(istim2)+length(modelID))));
-                    % find min value in the 'real data window', i.e., without the padding which contains extreme extrapolated values
-                    minval = min(min(temptrial(tstart(istim1):tstart(istim1)+length(modelID),tstart(istim2):tstart(istim2)+length(modelID))));
-                    temptrial(temptrial > maxval) = maxval;
-                    temptrial(temptrial < minval) = minval;
-                    
-                    % diagonal is now what we're looking for, i.e., the dissimilarity between stim1 and stim2 at each time point after
-                    % re-alignment on this particular iteration
-                    temptrial = diag(temptrial);
-                    
-                    RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + weight*temptrial;
-                end% lag loop
+                currentlag = lags(ilag);
+                weight = simWeights(implant,currentlag);
+                lag2implant = currentlag - zerolag;
+                lag2implant = lag2implant / cfg.downsample;%change from samples to seconds
                 
-            elseif simmod > 3 && simmod < 10 && nnz(simWeights(simmod,:)) ~= 0% for if dynRDM still needs to be created, i.e. for kinematic models
+                temptrial = squeeze(dynRDM{implant}(istim1,istim2,tNewID1+lag2implant,tNewID2+lag2implant));
                 
-                lags = find(simWeights(simmod,:) ~= 0);% loop over different lags at which at least one of the kinematic models is implanted
-                for ilag = 1:length(lags)
-                    
-                    currentlag = lags(ilag);
-                    weight = simWeights(simmod,currentlag);
-                    lag2implant = currentlag - zerolag;
-                    lag2implant = lag2implant / cfg.downsample;%change from samples to seconds
-                    
-                    % kinematic RDMs still need to be computed
-                    % again, use interpolation for alignment
-                    seq1 = permute(interp1(tKin,permute(squeeze(seqs(istim1,:,:,modelID)),[3 1 2]),tKin4extrap1-lag2implant,'pchip','extrap'),[2 3 1]);
-                    seq2 = permute(interp1(tKin,permute(squeeze(seqs(istim2,:,:,modelID)),[3 1 2]),tKin4extrap2-lag2implant,'pchip','extrap'),[2 3 1]);
-                    
-                    % again, keep extrapolated values within boundaries:
-                    for imark = 1:size(seq1,1)
-                        for idim = 1:size(seq1,2)
-                            maxval = max(seq1(imark,idim,tstart(istim1):tstart(istim1)+length(modelID)));
-                            minval = min(seq1(imark,idim,tstart(istim1):tstart(istim1)+length(modelID)));
-                            seq1(imark,idim,seq1(imark,idim,:)>maxval) = maxval;
-                            seq1(imark,idim,seq1(imark,idim,:)<minval) = minval;
-                            maxval = max(seq2(imark,idim,tstart(istim2):tstart(istim2)+length(modelID)));
-                            minval = min(seq2(imark,idim,tstart(istim2):tstart(istim2)+length(modelID)));
-                            seq2(imark,idim,seq2(imark,idim,:)>maxval) = maxval;
-                            seq2(imark,idim,seq2(imark,idim,:)<minval) = minval;
-                        end
-                    end
-                    
-                    % Align sequence 2 to sequence 1 using modified version of procrustes
-                    % note that my modified version of procrustes is very time inefficient now, as it loops over angles. There should be a much
-                    % faster implementation possible, still need to work on this. But currently works.
-                    seq2trans = zeros(size(seq2));
-                    for iframe = 1:size(seq2,3)
-                        [~, seq2trans(:,:,iframe)] = procrustes_constrain_rotationZaxis_IdV(squeeze(seq1(:,:,iframe)),squeeze(seq2(:,:,iframe)),'Reflection',false,'Scaling',false);
-                    end
-                    
-                    % Position vectors
-                    pos1 = reshape(seq1,numel(seq1(:,:,1)),size(seq1,3));
-                    pos2 = reshape(seq2,numel(seq2(:,:,1)),size(seq2,3));
-                    pos2trans = reshape(seq2trans,numel(seq2trans(:,:,1)),size(seq2trans,3));
-                    
-                    if simmod == 4
-                        % absolute position
-                        temp = weight*(1 - diag(corr(pos1,pos2)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    elseif simmod == 5
-                        % relative position
-                        temp = weight*(1 - diag(corr(pos1,pos2trans)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    end
-                    
-                    %% Velocity (motion) vectors: original order
-                    if simmod > 5
-                        vel1 = interp1(t4deriv,diff(pos1,[],2)',tNew,'pchip','extrap')';
-                        vel2 = interp1(t4deriv,diff(pos2,[],2)',tNew,'pchip','extrap')';
-                        vel2trans = interp1(t4deriv,diff(pos2trans,[],2)',tNew,'pchip','extrap')';
-                    end
-                    
-                    if simmod == 6
-                        % absolute motion
-                        temp = weight*(1 - diag(corr(vel1,vel2)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    elseif simmod == 7
-                        % relative motion
-                        temp = weight*(1 - diag(corr(vel1,vel2trans)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    end
-                    
-                    %% Acceleration vectors: original order
-                    if simmod > 7
-                        acc1 = interp1(t4deriv,diff(vel1,[],2)',tNew,'pchip','extrap')';
-                        acc2 = interp1(t4deriv,diff(vel2,[],2)',tNew,'pchip','extrap')';
-                        acc2trans = interp1(t4deriv,diff(vel2trans,[],2)',tNew,'pchip','extrap')';
-                    end
-                    
-                    if simmod == 8
-                        % absolute acceleration
-                        temp = weight*(1 - diag(corr(acc1,acc2)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    elseif simmod == 9
-                        % relative acceleration
-                        temp = weight*(1 - diag(corr(acc1,acc2trans)));
-                        temp(isnan(temp)) = 0;% if correlation over zero-padding, results in NaN, which will mess everything up. Better zeros here.
-                        RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + temp;
-                    end
-                    
-                end% lag loop
-            end% if iRDM
+                temptrial = diag(temptrial);
+                RDM2implant(istim1,istim2,:) = squeeze(RDM2implant(istim1,istim2,:)) + weight*temptrial;
+            end% lag loop
             
         end% second stimulus loop
     end% first stimulus loop
@@ -325,117 +161,34 @@ for iter = iterations
         RDM2implant = ft_preproc_smooth(RDM2implant,cfg.smoothModelRDM);
     end
     
-    % cut extra padding used for dRSA
-    % because outside those bounds some RDM vectors are not defined (i.e., they contain zeros, or interpolated values)
-    RDM2implant = RDM2implant(:,cfg.randshuff(2)*cfg.downsample:cfg.randshuff(2)*cfg.downsample+newtimelength-1);
-    neuralRDM = neuralRDM(:,cfg.randshuff(2)*cfg.downsample:cfg.randshuff(2)*cfg.downsample+newtimelength-1);
-    
     % rescale RDM2implant to same [0 2] interval, so has same scale as random neural data (and as each other, so dRSA values are better comparable)
-    for ibin = 1:size(RDM2implant,2)
-        RDM2implant(:,ibin) = rescale(squeeze(RDM2implant(:,ibin)),0,2);
-    end
+    RDM2implant = reshape(rescale(reshape(RDM2implant,size(RDM2implant,1)*size(RDM2implant,2),1),0,2),size(RDM2implant,1),size(RDM2implant,2));
     
     % Implant model RDM into randomized neural RDM
     if simmod ~= 99% if simmod == 99, we only simulated random neural data without implanted model RDM, just to confirm we don't get any meaningful patterns in the dRSA results
         neuralRDM = randomNeuralRDMweight*neuralRDM + RDM2implant;
     end
     
-    %% prepare and re-align model RDM for current iteration
-    modelRDMsquare = zeros(length(cfg.dynRDMnames),nstim,nstim,cfg.downsample*(triallengthsec+cfg.randshuff(2)));
-    % 1-3 are based on video data, > 4 are based on kinematic data, 10 is based on eye position data
-    for iRDM = [1:4 10]
-        for istim1 = 1:nstim
-            for istim2 = 1:nstim                
+    %% prepare model RDM for current iteration
+    % re-align model RDMs for current iteration
+    modelRDMsquare = zeros(length(dynRDM),nstim,nstim,cfg.downsample*(triallengthsec-cfg.randshuff(2)));%cfg.downsample*(triallengthsec+cfg.randshuff(2)));
+    for istim1 = 1:nstim
+        for istim2 = 1:nstim
+            
+            tNewID1 = shuffleIDmodel(istim1):shuffleIDmodel(istim1)+(triallengthsec-cfg.randshuff(2))*cfg.downsample-1;
+            tNewID2 = shuffleIDmodel(istim2):shuffleIDmodel(istim2)+(triallengthsec-cfg.randshuff(2))*cfg.downsample-1;
+            
+            for iRDM = 1:length(dynRDM)
                 
-                % realignment happens by creating a new time vector (tKin4extrap) which is used for interpolating data to new time
-                % advantage of this instead of simply selecting the 3-sec data, is that you can keep the non-selected data for a little longer as padding,
-                % so there's less chance of potential edge artifacts, e.g., when temporally smoothing the RDMs. Padding will be cut later on. This
-                % inevitably leads to some time window without data, in which now data will be interpolated. This is meaningless data, but this doesn't
-                % matter as it is only part of the padding that will be cut off anyway
-                tKin4extrap1 = [-tstart(istim1)/cfg.downsample:1/cfg.downsample:tKin(1) tKin(2:end-1) tKin(end):1/cfg.downsample:tKin(end)+(cfg.randshuff(2)*cfg.downsample-tstart(istim1))/cfg.downsample];
-                tKin4extrap2 = [-tstart(istim2)/cfg.downsample:1/cfg.downsample:tKin(1) tKin(2:end-1) tKin(end):1/cfg.downsample:tKin(end)+(cfg.randshuff(2)*cfg.downsample-tstart(istim2))/cfg.downsample];
+                temptrial = squeeze(dynRDM{iRDM}(istim1,istim2,tNewID1,tNewID2));
                 
-                if iRDM < 4 || iRDM > 9% dynRDM already computed, just extract correct windows
-                    
-                    % select time window
-                    temptrial = interp1(tKin,squeeze(dynRDM{iRDM}(istim1,istim2,modelID,modelID)),tKin4extrap1,'pchip','extrap');
-                    temptrial = interp1(tKin,temptrial',tKin4extrap2,'pchip','extrap')';
-                    
-                    % keep extrapolated values within boundaries, because they become extreme sometimes, which could be a problem for rescaling the RDMs below
-                    % find max value in the 'real data window', i.e., without the padding which contains extreme extrapolated values
-                    maxval = max(max(temptrial(tstart(istim1):tstart(istim1)+length(modelID),tstart(istim2):tstart(istim2)+length(modelID))));
-                    % find min value in the 'real data window', i.e., without the padding which contains extreme extrapolated values
-                    minval = min(min(temptrial(tstart(istim1):tstart(istim1)+length(modelID),tstart(istim2):tstart(istim2)+length(modelID))));
-                    temptrial(temptrial > maxval) = maxval;
-                    temptrial(temptrial < minval) = minval;
-                    
-                    % diagonal is now what we're looking for, i.e., the dissimilarity between stim1 and stim2 at each time point after
-                    % re-alignment on this particular iteration
-                    temptrial = diag(temptrial);
-                    
-                    modelRDMsquare(iRDM,istim1,istim2,:) = temptrial;
-                    
-                else% for kinematic dynRDM is not yet computed (can only be done here due to relative pos/vel/acc/jerk)
-                    
-                    % kinematic RDMs still need to be computed
-                    % again, use interpolation for alignment
-                    seq1 = permute(interp1(tKin,permute(squeeze(seqs(istim1,:,:,modelID)),[3 1 2]),tKin4extrap1,'pchip','extrap'),[2 3 1]);
-                    seq2 = permute(interp1(tKin,permute(squeeze(seqs(istim2,:,:,modelID)),[3 1 2]),tKin4extrap2,'pchip','extrap'),[2 3 1]);
-                    
-                    % again, keep extrapolated values within boundaries:
-                    for imark = 1:size(seq1,1)
-                        for idim = 1:size(seq1,2)
-                            maxval = max(seq1(imark,idim,tstart(istim1):tstart(istim1)+length(modelID)));
-                            minval = min(seq1(imark,idim,tstart(istim1):tstart(istim1)+length(modelID)));
-                            seq1(imark,idim,seq1(imark,idim,:)>maxval) = maxval;
-                            seq1(imark,idim,seq1(imark,idim,:)<minval) = minval;
-                            maxval = max(seq2(imark,idim,tstart(istim2):tstart(istim2)+length(modelID)));
-                            minval = min(seq2(imark,idim,tstart(istim2):tstart(istim2)+length(modelID)));
-                            seq2(imark,idim,seq2(imark,idim,:)>maxval) = maxval;
-                            seq2(imark,idim,seq2(imark,idim,:)<minval) = minval;
-                        end
-                    end
-                    
-                    % Align sequence 2 to sequence 1 using modified version of procrustes
-                    % note that my modified version of procrustes is very time inefficient now, as it loops over angles. There should be a much
-                    % faster implementation possible, still need to work on this. But currently works.
-                    seq2trans = zeros(size(seq2));
-                    for iframe = 1:size(seq2,3)
-                        [~, seq2trans(:,:,iframe)] = procrustes_constrain_rotationZaxis_IdV(squeeze(seq1(:,:,iframe)),squeeze(seq2(:,:,iframe)),'Reflection',false,'Scaling',false);
-                    end
-                    
-                    % Position vectors
-                    pos1 = reshape(seq1,numel(seq1(:,:,1)),size(seq1,3));
-                    pos2 = reshape(seq2,numel(seq2(:,:,1)),size(seq2,3));
-                    pos2trans = reshape(seq2trans,numel(seq2trans(:,:,1)),size(seq2trans,3));
-                    
-                    % compute RDMs
-                    modelRDMsquare(4,istim1,istim2,:) = 1 - diag(corr(pos1,pos2));% absolute position
-                    modelRDMsquare(5,istim1,istim2,:) = 1 - diag(corr(pos1,pos2trans));% relative position
-                    
-                    %% Velocity (motion) vectors
-                    vel1 = interp1(t4deriv,diff(pos1,[],2)',tNew,'pchip','extrap')';
-                    vel2 = interp1(t4deriv,diff(pos2,[],2)',tNew,'pchip','extrap')';
-                    vel2trans = interp1(t4deriv,diff(pos2trans,[],2)',tNew,'pchip','extrap')';
-                    
-                    % compute RDMs
-                    modelRDMsquare(6,istim1,istim2,:) = 1 - diag(corr(vel1,vel2));% absolute motion
-                    modelRDMsquare(7,istim1,istim2,:) = 1 - diag(corr(vel1,vel2trans));% relative motion
-                    
-                    %% Acceleration vectors
-                    acc1 = interp1(t4deriv,diff(vel1,[],2)',tNew,'pchip','extrap')';
-                    acc2 = interp1(t4deriv,diff(vel2,[],2)',tNew,'pchip','extrap')';
-                    acc2trans = interp1(t4deriv,diff(vel2trans,[],2)',tNew,'pchip','extrap')';
-                    
-                    % compute RDMs
-                    modelRDMsquare(8,istim1,istim2,:) = 1 - diag(corr(acc1,acc2));% absolute
-                    modelRDMsquare(9,istim1,istim2,:) = 1 - diag(corr(acc1,acc2trans));% relative
-                    
-                end
+                temptrial = diag(temptrial);
                 
-            end% second stimulus loop
-        end% first stimulus loop
-    end% model loop
+                modelRDMsquare(iRDM,istim1,istim2,:) = temptrial;
+                
+            end% model loop
+        end% second stimulus loop
+    end% first stimulus loop
     
     % for relative models take average of (stim1*stim2trans) and (stim1trans*stim2), which is not exactly the same because procrustes is not symmetrical
     for iRDM = [5 7 9]
@@ -454,20 +207,12 @@ for iter = iterations
         end
     end
     
-    % remove NaNs due to combination of extrapolation with constant value and taking the derivative for motion/acceleration, which results in
-    % zeros, which in turn results in NaNs when performing correlation for RDMs (but only at the edges that are not chopped off below anyway)
-    modelRDM(isnan(modelRDM)) = 0;
-    
     % smooth model RDM across time
     if cfg.smoothModelRDM
         for i=1:size(modelRDM,3)
             modelRDM(:,:,i) = ft_preproc_smooth(squeeze(modelRDM(:,:,i)),cfg.smoothModelRDM);
         end
     end
-    
-    %% cut extra padding used for dRSA
-    % because outside those bounds some RDM vectors are not defined (i.e., they contain zeros, or interpolated values)
-    modelRDM = modelRDM(:,cfg.randshuff(2)*cfg.downsample:cfg.randshuff(2)*cfg.downsample+newtimelength-1,:);
     
     %% rescale all RDMs to same [0 2] interval. Unscaled might be problematic for PCA or regression (i.e., larger scale = more variance = higher component)
     % scale once across all time points but per model to keep internal model structure of variance over time intact
@@ -482,17 +227,17 @@ for iter = iterations
     
     %% dynamic RSA
     % simple correlation
-    if cfg.glmRSA == 0
+    if cfg.similarity == 0
         
-        omega = zeros(size(neuralRDM,2),size(neuralRDM,2),length(cfg.dynRDMnames));
+        dRSA = zeros(size(neuralRDM,2),size(neuralRDM,2),length(cfg.dynRDMnames));
         for iRDM = 1:length(cfg.dynRDMnames)
             
             % neural - model correlation
-            omega(:,:,iRDM) = corr(squeeze(modelRDM(iRDM,:,:))',neuralRDM);
+            dRSA(:,:,iRDM) = corr(squeeze(modelRDM(iRDM,:,:))',neuralRDM);
             
         end
         
-    elseif cfg.glmRSA == 1% principal component regression (PCR)
+    elseif cfg.similarity == 1% principal component regression (PCR)
             
         % which models to regress out, i.e., all other models:
         models2regressout = [2:10; 1 3:10; 1 2 4:10; 1:3 5:10; 1:4 6:10; 1:5 7:10; 1:6 8:10; 1:7 9:10; 1:8 10; 1:9;];
@@ -500,13 +245,11 @@ for iter = iterations
         % to attenuate effects of model autocorrelation, we regress out the model itself, a certain distance away from our time point of interest
         % (i.e., ibin1 in the loops below, i.e., the time point of Xtest). This distancse is the regborder (regression border) variable, and it is
         % previously determined based on the simulations (see methods section of article for details), and loaded in here.
-        load(fullfile(outdir,'..','..','regressionBorderPerModel_smRDM20msec'),'regborder');
-        
-        % The rows correspond to amount of autocorrelation still present at a certain lag, as can be seen in Figure S4a
-        % 1 = 0.5 autocorrelation, 2 = 0.25, 3 = 0.32 (which corresponds to 10% shared variance), 4 = 0.71 (which corresponds to 50% shared variance)
-        regborder = regborder(:,3);
+        load(fullfile(outdir,'..','..','regressionBorderPerModel_smRDM30msec'),'regborder');
+        regborder.subinvarmods(10) = regborder.subvarmods(isub);
+        regborder = regborder.subinvarmods;
                 
-        omega = zeros(size(neuralRDM,2),size(neuralRDM,2),length(cfg.dynRDMnames));
+        dRSA = zeros(size(neuralRDM,2),size(neuralRDM,2),length(cfg.dynRDMnames));
         for iRDM = 1:length(cfg.dynRDMnames)% models to test
             for ibin1 = 1:size(modelRDM,2)% model time
                 
@@ -565,7 +308,7 @@ for iter = iterations
                 
                 % select the first weight, which corresponds to the weight for Xtest. The other weights correspond to Xregressout, which we are
                 % not interested in for this particular analysis. Rather, they are 'regressed out'.
-                omega(ibin1,:,iRDM) = temp(1,:);
+                dRSA(ibin1,:,iRDM) = temp(1,:);
                                 
             end% ibin1 loop
             
@@ -574,15 +317,15 @@ for iter = iterations
     end
     
     % combine data from all iterations
-    omegaPerIter(iter-(iterbatch-1)*cfg.iterationsPERbatch,:,:,:) = omega;
-    clear omega
+    dRSAperIter(iter-(iterbatch-1)*cfg.iterationsPERbatch,:,:,:) = dRSA;
+    clear dRSA
     
 end
 
 % average over iterations within this batch
-omegaAll = squeeze(mean(omegaPerIter));
-clear omegaPerIter;
+dRSAall = squeeze(mean(dRSAperIter));
+clear dRSAperIter;
 
-save(fn2save,'omegaAll');
+save(fn2save,'dRSAall');
 
 end

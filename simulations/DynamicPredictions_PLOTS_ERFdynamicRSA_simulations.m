@@ -5,12 +5,6 @@ addpath(genpath('\\XXX\ActionPrediction\code'));
 cfg.path = '\\XXX\ActionPrediction';
 ft_defaults
 
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\toolboxes\fieldtrip-20191113');
-addpath('\\cimec-storage5.unitn.it\MORWUR\Projects\INGMAR\ActionPrediction\code\neuralDecoding');
-
-ft_defaults
-cfg = ActionPrediction_config(cfg);
-
 %% some parameters for plotting:
 tRange=1*cfg.downsample;% maximum lag to plot
 maxLag = 1;% maximum lag to plot
@@ -23,51 +17,70 @@ colors(1:5,:) = colors(1:5,:) - .1;% first 5 colors are a bit too bright
 colors(10,:) = [0 0 0];% last color is eye position which can be black
 
 %% input and output folders
-if cfg.glmRSA == 0
+if cfg.similarity == 0
     corrORglm = 'corr';
-elseif cfg.glmRSA == 1
+elseif cfg.similarity == 1
     corrORglm = ['pcr_' num2str(cfg.nPCAcomps) 'comps'];
 end
 indirSIM = fullfile(cfg.path,'data','MEG',['source_' cfg.atlas],'RSA','simulations',[corrORglm '_' num2str(cfg.lag*1000) 'lag_' num2str(cfg.randshuff(1)) 'iterations_' num2str(ceil(cfg.randshuff(2)*1000)) 'msec']);
 
 rdmLabels = cfg.dynRDMnames;
 
-%% load simulation results
-omega = [];
-for ibatch = 1:cfg.iterbatches
-    for implant = 1:length(rdmLabels)
-        fn = sprintf('%s%comega_SUB%02d_implant%d_batch%d_%dHz_smMEG%d_smRDMneu%d_smRDMmod%d',indirSIM, filesep, 7, implant, ibatch, cfg.downsample, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
-        load(fn,'omegaAll');
-        omega(ibatch,implant,:,:,:) = omegaAll;
+%% load data
+% simulated data with separately all single model implanted
+rstackLine = zeros(length(cfg.SubVec),length(cfg.SimVec),length(cfg.dynRDMnames),length(TimeVec2));
+regborder = zeros(length(cfg.SubVec),size(rstackLine,3));
+for isub = 1:length(cfg.SubVec)
+    
+    omega = [];
+    for ibatch = 1:cfg.iterbatches
+        for implant = 1:length(cfg.SimVec)
+            
+            fn = sprintf('%s%comega_SUB%02d_implant%d_batch%d_%dHz_rad%d_ave%d_resample%d_classifer%d_chunk%d_smMEG%d_smRDMneu%d_smRDMmod%d',indirSIM, filesep, cfg.SubVec(isub), cfg.SimVec(implant), ibatch, cfg.downsample, cfg.radius, cfg.averaging, cfg.resampling, cfg.classifier, cfg.chunksize, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
+            load(fn,'omegaAll');
+            omega(ibatch,implant,:,:,:) = omegaAll;
+        end
+
     end
     
-    % randomized data with no models implanted
-    fn = sprintf('%s%comega_SUB%02d_implant%d_batch%d_%dHz_smMEG%d_smRDMneu%d_smRDMmod%d',indirSIM, filesep, 7, 99, ibatch, cfg.downsample, cfg.smoothingMSec, cfg.smoothNeuralRDM, cfg.smoothModelRDM);
-    load(fn,'omegaAll');
-    omega(ibatch,length(rdmLabels)+1,:,:,:) = omegaAll;
-end
-omega = squeeze(mean(omega));
+    if cfg.iterbatches == 1
+        omega = squeeze(omega);
+    else
+        omega = squeeze(mean(omega));
+    end
 
-%% compute rstackLine for lag-plots (see main script "DynamicPredictions_STATS_ERFdynamicRSA_ROIsource.m" for more info on this step)
-rstack = zeros(size(omega,1),size(omega,4),size(omega,2),length(TimeVec2));
-for implant = 1:size(omega,1)
-    for iRDM = 1:size(omega,4)
-        for iModelTime = 1:size(omega,2)
-            
-            timeidx = iModelTime - tRange:iModelTime + tRange;
-            NotInVid = logical((timeidx < 1)+(timeidx > size(omega,2)));
-            timeidx(NotInVid) = 1;%remove indices that fall before or after video
-            
-            slice = squeeze(omega(implant,iModelTime,timeidx,iRDM));
-            slice(NotInVid) = NaN;%remove indices that fall before or after video
-            rstack(implant,iRDM,iModelTime,:) = slice;
-            
+    % compute rstackLine
+    rstack = zeros(size(omega,1),size(omega,4),size(omega,2),length(TimeVec2));
+    for implant = 1:size(omega,1)
+        for iRDM = 1:size(omega,4)
+            for iModelTime = 1:size(omega,2)
+
+                timeidx = iModelTime - tRange:iModelTime + tRange;
+                NotInVid = logical((timeidx < 1)+(timeidx > size(omega,2)));
+                timeidx(NotInVid) = 1;%remove indices that fall before or after video
+
+                slice = squeeze(omega(implant,iModelTime,timeidx,iRDM));
+                slice(NotInVid) = NaN;%remove indices that fall before or after video
+                rstack(implant,iRDM,iModelTime,:) = slice;
+
+            end
         end
     end
-end
 
-% Average over video time
-rstackLine = squeeze(nanmean(rstack,3));
+    %Average over video time
+    rstackLine(isub,:,:,:) = squeeze(nanmean(rstack,3));
+
+    zeroID = dsearchn(TimeVec2',0);
+    for iRDM = 1:size(rstackLine,3)
+        
+        peak = max(rstackLine(isub,iRDM,iRDM,:));
+        
+        % based on 32% of peak of corr = 1 (i.e., 10% shared variance)
+        regborder(cfg.SubVec(isub),iRDM) = ceil(nanmean([find(flip((squeeze(rstackLine(isub,iRDM,iRDM,1:zeroID)))) < .3162*peak,1) find(squeeze(rstackLine(isub,iRDM,iRDM,zeroID:end)) < .3162*peak,1)]));
+        
+    end
+
+end% subject loop
 
 %% compute and save slopes of simulated autocorrelation (or in this case PCAandPCR dRSA lag-plots resulting from simulated data)
 % NOTE: this should be run on the results of the simulations using PCR
@@ -128,9 +141,9 @@ for iRDM = 1:length(cfg.models2test)
     hold off
     
     if iRDM == 1
-        if cfg.glmRSA == 0
+        if cfg.similarity == 0
             ylabel('dRSA [corr]'); 
-        elseif cfg.glmRSA == 1
+        elseif cfg.similarity == 1
             ylabel('dRSA [beta]'); 
         end
     end

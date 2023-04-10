@@ -13,9 +13,9 @@ if isfield(cfg,'cluster')% send to cluster
     
     % Assign tasks using your function
     for iterbatch = 1:cfg.iterbatches% to speed up process, run different iterations in parallel on different nodes on the cluster, and average over those afterwards
-        for iroi=cfg.ROIVec
+        for isub=cfg.SubVec
             for isim = cfg.SimVec
-                createTask(job,str2func(script2run), 0,{cfg, isim, iroi, iterbatch});%
+                createTask(job,str2func(script2run), 0,{cfg, isim, isub, iterbatch});%
             end
         end
     end
