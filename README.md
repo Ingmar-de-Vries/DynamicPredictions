@@ -72,13 +72,13 @@ The code in this GitHub repository is structured as follows:
       - "DynamicPredictions_STATS_ERFdynamicRSA_ROIsource.m" - run statistics on ROI-based dRSA results, and compute peak latency and representational spread (RS) index. This function is called from main script "DynamicPredictions_pipeline.m". 
       - "modelautocorr_slopes.mat" - file containing dRSA curves resulting from PCR on simulated data. This is used to compute the representational spread (RS) index (see methods section in article and explanation in "DynamicPredictions_STATS_ERFdynamicRSA_ROIsource.m" for details).
       - "DynamicPredictions_runFTstats.m" - shell around Fieldtrip functions for running cluster-based permutation tests on 2D dRSA matrix or on averaged dRSA lag-plot. This function is called from "DynamicPredictions_STATS_ERFdynamicRSA_ROIsource.m". See scripts for details. 
-      - "DynamicPredictions_PLOTS_ERFdynamicRSA_ROIsource.m" - plot ROI-based results, in article: figure 2a, 3, and S5.
+      - "DynamicPredictions_PLOTS_ERFdynamicRSA_ROIsource.m" - plot ROI-based results, in article: figure 2a, 3, and S1.
       - "brewermap.m" - creates nice colormaps that are colorblind friendly. Not my code, for all colormaps and source code see: https://colorbrewer2.org/
       - "boundedline.m" - creates nice shading around lines, e.g., with a measure of distribution across subjects (here standard error). Not my code, for source code see https://github.com/kakearney/boundedline-pkg
       - "DynamicPredictions_RUN_ERFdynamicRSA_searchlight.m" - searchlight analysis, which is called from "DynamicPredictions_pipeline.m"
       - "DynamicPredictions_STATS_ERFdynamicRSA_searchlight.m" - statistics on searchlight analysis. 
       - "fdr_bh.m" - FDR correction for statistics on searchlight analysis. This function is called in "DynamicPredictions_STATS_ERFdynamicRSA_searchlight.m"
-      - "DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight.m" - plot searchlight results, in article: figure 2b and S6. Note that this is done partly using the Brainstorm GUI to create pretty cortical map figures. Go through this script line-by-line and read the comments if you want to create similar figures. 
+      - "DynamicPredictions_PLOTS_ERFdynamicRSA_searchlight.m" - plot searchlight results, in article: figure 2b. Note that this is done partly using the Brainstorm GUI to create pretty cortical map figures. Go through this script line-by-line and read the comments if you want to create similar figures. 
 
 - Run dRSA simulations, and plotting
   - Note that the simulations are also called from the main "DynamicPredictions_pipeline.m" script. In the "simulations" subdirectory, you'll find the following scripts:
