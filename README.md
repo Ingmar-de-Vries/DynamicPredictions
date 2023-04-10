@@ -8,12 +8,12 @@ This article presents a new dynamic extension to the influential representationa
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
-Note that this custom-written code uses several functions from the Brainstorm (tested version: 3), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019.1) toolboxes, and was written and tested in Matlab 2020a.  
-
 Note that the larger data files belonging to this repository are stored on a public OSF repository (DOI: 10.17605/OSF.IO/ZK42F; or look for Ingmar de Vries - DynamicPredictions, as the DOI does not seem to work for me). The OSF repository includes: 
   - An example dataset with which all analysis code can be tested. See more information in the "example_dataset_readme.txt" file included in this repository. 
   - a zipped folder titled 'Source Data'. This folder includes the data of all 22 subjects for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
   - The 9 model RDMs used in the reported study.
+
+Note that this custom-written code uses several functions from the Brainstorm (tested version: 3), Fieldtrip (tested version: 20191113) and EEGLAB (tested version: 2019.1) toolboxes, and was written and tested in Matlab 2020a.  
 
 The code in this GitHub repository is structured as follows:
 
