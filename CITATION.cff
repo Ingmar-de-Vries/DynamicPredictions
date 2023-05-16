@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "De Vries"
+  given-names: "Ingmar Engbert Jacob"
+  orcid: "https://orcid.org/0000-0002-0174-7320"
+- family-names: "Wurm"
+  given-names: "Moritz Franz"
+  orcid: "https://orcid.org/0000-0003-4358-9815"
+title: "Predictive neural representations of naturalistic dynamic input"
+version: 1.0.0
+doi: https://doi.org/10.5281/zenodo.794121264
+date-released: 2023-05-16
+url: "https://github.com/Ingmar-de-Vries/DynamicPredictions"
