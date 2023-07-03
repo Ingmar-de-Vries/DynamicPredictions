@@ -2,9 +2,9 @@
 
 DOI code: 10.5281/zenodo.7941212
 
-This repository contains Matlab code accompanying the scientific article, currently available as pre-print, titled: "Predictive neural representations of naturalistic dynamic input", by Ingmar E.J. de Vries and Moritz F. Wurm. 
+This repository contains Matlab code accompanying the scientific article available at 
 
-  -	The article is available at: https://doi.org/10.1101/2022.09.02.506366
+De Vries, I.E.J., Wurm, M.F. Predictive neural representations of naturalistic dynamic input. Nat Commun 14, 3858 (2023). https://doi.org/10.1038/s41467-023-39355-y
 
 This article presents a new dynamic extension to the influential representational similarity analysis (RSA) approach, which allows investigating when naturalistic dynamic stimuli are represented in different parts of the brain, at different hierarchical levels of processing (e.g., low-level visual, body posture or motion of a ballet dancer). The code in this repository allows for exact replication of the dRSA pipeline as presented in the article, but is also meant as inspiration for people interested in using dRSA to answer their own research questions. In the future I will generalize the code a bit more (e.g., less hard coding inside functions, more options, etc.) and create a separate repository dedicated to the dRSA method itself. In principle, dRSA can be applied to many different sensory modalities and contexts (e.g., naturalistic sound scenes, music, language), and on any signal with high enough temporal resolution (M/EEG, ECoG, eyetracking, etc.). Additionally, it should be straightforward to implement different dissimilarity measures for the neural and model RDMs, and a different similarity measure for the dRSA (i.e., here the principal component regression approach). We have found this similarity measure to be most effective for the current experiment, as tested with the simulations, but we have not extensively tested different dissimilarity measures.  
 
