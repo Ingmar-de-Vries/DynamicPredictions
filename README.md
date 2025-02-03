@@ -6,12 +6,14 @@ This repository contains Matlab code accompanying the scientific article availab
 
 De Vries, I.E.J., Wurm, M.F. Predictive neural representations of naturalistic dynamic input. Nat Commun 14, 3858 (2023). https://doi.org/10.1038/s41467-023-39355-y
 
+If you use the data on OSF or the code here, please cite the above article.
+
 This article presents a new dynamic extension to the influential representational similarity analysis (RSA) approach, which allows investigating when naturalistic dynamic stimuli are represented in different parts of the brain, at different hierarchical levels of processing (e.g., low-level visual, body posture or motion of a ballet dancer). The code in this repository allows for exact replication of the dRSA pipeline as presented in the article, but is also meant as inspiration for people interested in using dRSA to answer their own research questions. In the future I will generalize the code a bit more (e.g., less hard coding inside functions, more options, etc.) and create a separate repository dedicated to the dRSA method itself. In principle, dRSA can be applied to many different sensory modalities and contexts (e.g., naturalistic sound scenes, music, language), and on any signal with high enough temporal resolution (M/EEG, ECoG, eyetracking, etc.). Additionally, it should be straightforward to implement different dissimilarity measures for the neural and model RDMs, and a different similarity measure for the dRSA (i.e., here the principal component regression approach). We have found this similarity measure to be most effective for the current experiment, as tested with the simulations, but we have not extensively tested different dissimilarity measures.  
 
 For details regarding this experiment, stimuli and analysis code, please see methods section of the article. Please contact me for any further questions at i.e.j.de.vries@gmail.com
 
-Note that the larger data files belonging to this repository are stored on a public OSF repository (DOI: 10.17605/OSF.IO/ZK42F; or look for Ingmar de Vries - DynamicPredictions, as the DOI does not seem to work for me). The OSF repository includes: 
-  - An example dataset with which all analysis code can be tested. See more information in the "example_dataset_readme.txt" file included in this repository. 
+Note that the larger data files belonging to this repository are stored on a public OSF repository (DOI: [10.17605/OSF.IO/ZK42F](https://doi.org/10.17605/OSF.IO/ZK42F); or look for Ingmar de Vries - DynamicPredictions). The OSF repository includes: 
+  - MEG data. See more information in the "dataset_readme.txt" file included in this repository. 
   - A zipped folder titled 'Source Data'. This folder includes the data of all 22 subjects for all main results (Fig. 2a and b, Fig. 3a and c, and Fig. S1).
   - The 9 model RDMs used in the reported study.
 
