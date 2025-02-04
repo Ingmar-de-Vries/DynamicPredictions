@@ -2,7 +2,7 @@ MEG dataset used for the paper. Please notify me if any problems arise. A few no
 
   - The dataset can be found at DOI: https://doi.org/10.17605/OSF.IO/ZK42F
   
-  - This is the real dataset used in the study. Note that for privacy reasons, the individual anatomical scan is not included. However, both the preprocessed data at sensor level and the inversion kernel to transform sensor level data to source level data are included, as well as the individual atlas definitions, which relate each vertex in the inversion kernel to a parcel in the atlas. The inversion kernel is computed using either the individual anatomical scan if available, or the template scan (see which one in the analysis logbook). The combination of the dataset and provided analysis code should allow one to reproduce the figures presented in the article. 
+  - This is a real dataset used in the study, but only for a single subject. Note that for privacy reasons, the individual anatomical scan is not included. However, both the preprocessed data at sensor level and the inversion kernel to transform sensor level data to source level data are included, as well as the individual atlas definitions, which relate each vertex in the inversion kernel to a parcel in the atlas. The inversion kernel is computed using either the individual anatomical scan if available, or the template scan (see which one in the analysis logbook). The combination of the dataset and provided analysis code should allow one to reproduce the figures presented in the article (but for a single instead of 22 subjects). 
   
   - Data structure:
     - subjectinfo_and_logbook - excel file containing some subject information and a recording and analysis logbook. For privacy purposes non-essential information has been removed.
